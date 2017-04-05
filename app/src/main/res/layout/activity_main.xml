@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <Button
+            android:id="@+id/btnGetAudioSetting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="获取本手机型号的 Audio Setting"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etUserName"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:hint="用户名：" />
+
+            <EditText
+                android:id="@+id/etUserKey"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:hint="用户Key：" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnInitSdk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1.初始化sdk" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etRoomServer"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:textSize="11sp"
+                android:hint="请输入房间ebtlIP："
+                android:text="room.audio.mztgame.com:8080" />
+            #android:text="192.168.114.4:18888" />
+            #android:text="115.159.251.79:8081" />
+            #android:text="115.159.252.235:7002" />
+
+            <Button
+                android:id="@+id/btnCustomRoomServerAddr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:text="自定义房间服务IP" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etRoomId"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:hint="请输入房间号："
+                android:text="2" />
+
+            <Button
+                android:id="@+id/btnJoinRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2.加入房间" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnLeaveRoom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="3.离开房间" />
+
+            <Button
+                android:id="@+id/btnVoiceMute"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="静音/打开声音" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSetLouderSpeaker"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="4.打开扬声器" />
+
+            <Button
+                android:id="@+id/btnAdjustVolume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="5.关闭扬声器" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnUpVolume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="6.加音量" />
+
+            <Button
+                android:id="@+id/btnDownVolume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="7.减音量" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSetParams"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="设置参数" />
+
+            <Button
+                android:id="@+id/btnCallback"
+                android:layout_width="0dp"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="回调" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnRecord"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="录音/停止" />
+
+            <Button
+                android:id="@+id/btnPlay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="播放/停止" />
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/rgVoiceToText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbVoiceToText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="录音时将语音转化为文字" />
+
+            <RadioButton
+                android:id="@+id/rbVoiceToTextStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="录音时不将语音转化" />
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/etResult"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="语音转化为文字结果"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCancelRecord"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="取消录音" />
+
+            <Button
+                android:id="@+id/btnChangeUser"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="改变语音聊天登录用户信息" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
