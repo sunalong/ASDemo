@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_enter"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.ztgametest.EnterActivity">
+
+    <Button
+        android:text="IM测试"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/avbutton"
+        android:layout_marginTop="90dp"
+        android:id="@+id/imbutton"
+        android:layout_alignStart="@+id/avbutton"
+        android:layout_alignEnd="@+id/avbutton"
+        android:onClick="jumpOnClick"/>
+
+    <Button
+        android:text="音视频测试"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:id="@+id/avbutton"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="jumpOnClick"/>
+
+</RelativeLayout>

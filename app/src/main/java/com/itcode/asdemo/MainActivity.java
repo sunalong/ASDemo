@@ -26,9 +26,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-//import com.alibaba.fastjson.JSON;
-import com.lw.RecordImage.GameVoiceManager;
-import com.ztgame.voiceengine.AudioSetting;
+import com.itcode.asdemo.R;
 import com.ztgame.voiceengine.NativeVoiceEngine;
 import com.ztgame.voiceengine.RTChatSDKVoiceListener;
 import com.ztgame.voiceengine.ReceiveDataFromC;
@@ -36,6 +34,8 @@ import com.ztgame.voiceengine.ReceiveDataFromC;
 import org.json.JSONObject;
 
 import java.util.Random;
+
+//import com.alibaba.fastjson.JSON;
 
 public class MainActivity extends Activity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
@@ -74,14 +74,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private EditText etResult;
     private static String TAG = MainActivity.class.getSimpleName();
 
+    private final int kVoiceOnly = 1;
+    private final int kVideo_normalDefinition = 3;
+    private final int kVideo_highDefinition = 7;
+    private final int kVideo_veryHighDefinition = 11;
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Log.i(TAG, "--1--mainactivigy----权限，始化" + requestCode);
-        rtChatSdk.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.i(TAG, "--2--mainactivigy----权限，始化" + requestCode);
 
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,9 +142,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
         setOnListener();
         etUserName.setText(getRandomString(10));
         etUserKey.setText(getRandomString(11));
-        rtChatSdk.setParams(FileURL, AppID);
         setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
 //        rtChatSdk.requestPermissions();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        rtChatSdk.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private static String AppID = "58536195";
@@ -283,11 +285,18 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                 userKey = etUserKey.getText().toString().trim();
                 if (TextUtils.isEmpty(userName))
                     userName = "fuckName";
-//                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
-                rtChatSdk.initSDK("3768c59536565afb", "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe");
-                Toast.makeText(this, "初始化返回的值：retCode11:" + retCode, 0).show();
+                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
+                Toast.makeText(this, "初始化返回的值：retCode:" + retCode, 0).show();
                 break;
             case R.id.btnCustomRoomServerAddr:
+                userName = etUserName.getText().toString().trim();
+                userKey = etUserKey.getText().toString().trim();
+                if (TextUtils.isEmpty(userName))
+                    userName = "nameChange";
+                rtChatSdk.setUserInfo(userName, userKey);
+
+                rtChatSdk.setParams(FileURL, AppID);
+
                 String roomServerStr = etRoomServer.getText().toString().trim();
                 if(TextUtils.isEmpty(roomServerStr)){
                     Toast.makeText(this, "请输入IP:", 0).show();
@@ -308,9 +317,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                     Toast.makeText(this, "请输入房间号", 0).show();
                     return;
                 } else {
-                    retCode = rtChatSdk.requestJoinPlatformRoom(etRoomId.getText().toString().trim());
+                    retCode = rtChatSdk.requestJoinPlatformRoom(etRoomId.getText().toString().trim(), kVoiceOnly);
                     Toast.makeText(this, "进入房间返回的值：retCode:" + retCode, 0).show();
                 }
+
                 break;
             case R.id.btnLeaveRoom:
 //                retCode = rtChatSdk.leaveRoom();
