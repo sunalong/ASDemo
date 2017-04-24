@@ -35,7 +35,7 @@ public class ConnectAVActivity extends Activity {
     //内网key
     private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
     private static final String innerAppId = "1fcfaa5cdc01502e";
-    private static final String innerPlatformServerUrl = "192.168.114.4:18888";
+    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
 
     //外网key
     private static final String outerAppId = "3768c59536565afb";

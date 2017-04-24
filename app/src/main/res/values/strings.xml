@@ -218,7 +218,7 @@
     <string name="pref_room_server_url_key">platform_server_url_preference</string>
     <string name="pref_room_server_url_title">平台服务器URL.</string>
     <string name="pref_room_server_url_dlg">输入平台服务器URL.</string>
-    <string name="pref_room_server_url_default" translatable="false">192.168.114.4:18888</string>
+    <string name="pref_room_server_url_default" translatable="false">192.168.114.7:18888</string>
 
     <string name="pref_displayhud_key">displayhud_preference</string>
     <string name="pref_displayhud_title">Display call statistics.</string>
