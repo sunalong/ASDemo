@@ -91,7 +91,6 @@ public class ConnectAVActivity extends Activity {
 
 
         // Get setting keys.
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         keyprefRoom = getString(R.string.pref_room_key);
 
