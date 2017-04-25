@@ -36,8 +36,6 @@
     <string name="toggle_debug">Toggle debug view</string>
     <string name="ok">OK</string>
 
-    <string name="room_description">请输入房间名字：</string>
-
     <string name="connect_description">Connect to the room</string>
     <string name="settings_name" translatable="false">RTChatSDKDEMO Settings</string>
 

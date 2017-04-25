@@ -68,10 +68,6 @@
                   android:windowSoftInputMode="adjustPan">
         </activity>
 
-        <activity android:name="SettingsActivity"
-                  android:label="@string/settings_name">
-        </activity>
-
         <activity
             android:name=".CallActivity"
             android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
