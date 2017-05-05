@@ -96,6 +96,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                                 Toast.makeText(MainActivity.this, "初始化完毕" + error, 0).show();
                             }
                         });
+                        rtChatSdk.setParams(FileURL, AppID);
                         Log.i(TAG, "-MainActivity-初始化完毕------lala" + error);
                         break;
                     case 7://进入房间
@@ -288,8 +289,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                 if (TextUtils.isEmpty(userName))
                     userName = "nameChange";
                 rtChatSdk.setUserInfo(userName, userKey);
-
-                rtChatSdk.setParams(FileURL, AppID);
 
                 String roomServerStr = etRoomServer.getText().toString().trim();
                 if(TextUtils.isEmpty(roomServerStr)){

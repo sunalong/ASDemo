@@ -60,7 +60,7 @@
                 android:layout_weight="1"
                 android:textSize="11sp"
                 android:hint="请输入房间ebtlIP："
-                android:text="115.159.251.79:8081" />
+                android:text="115.159.251.79:8080" />
                 <!--android:text="room.audio.mztgame.com:8080"/>-->
                 android:text="192.168.114.7:18888" />
                 #android:text="115.159.252.235:7002" />
