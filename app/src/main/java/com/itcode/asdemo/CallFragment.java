@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.CheckBox;
 
-import com.itcode.asdemo.R;
+import com.itcode.asdemo.CallActivity;
 
 import org.webrtc.RendererCommon.ScalingType;
 
@@ -27,6 +27,7 @@ public class CallFragment extends Fragment {
   private CheckBox openRemoteVideoCheckBox;
   private CheckBox displayRemoteViewCheckBox;
   private CheckBox sendLocalVideoCheckBox;
+  private CheckBox enableBeautifyCheckBox;
   private CheckBox displayLocalViewCheckBox;
   private ImageButton cameraSwitchButton;
   private ImageButton videoScalingButton;
@@ -53,6 +54,7 @@ public class CallFragment extends Fragment {
     void onDisplayRemoteView(boolean isChecked);
     void onSendLocalVideo(boolean isChecked);
     void onDisplayLocalView(boolean isChecked);
+    void onOpenBeautify(boolean isChecked);
   }
 
   @Override
@@ -70,6 +72,7 @@ public class CallFragment extends Fragment {
     openRemoteVideoCheckBox = (CheckBox) controlView.findViewById(R.id.open_remote_video_checkbox);
     displayRemoteViewCheckBox = (CheckBox) controlView.findViewById(R.id.display_remote_view_checkbox);
     sendLocalVideoCheckBox = (CheckBox) controlView.findViewById(R.id.send_local_video_checkbox);
+    enableBeautifyCheckBox = (CheckBox) controlView.findViewById(R.id.open_beautify_video_checkbox);
     displayLocalViewCheckBox = (CheckBox) controlView.findViewById(R.id.display_local_view_checkbox);
     captureFormatText = (TextView) controlView.findViewById(R.id.capture_format_text_call);
     captureFormatSlider = (SeekBar) controlView.findViewById(R.id.capture_format_slider_call);
@@ -117,6 +120,13 @@ public class CallFragment extends Fragment {
       }
     });
 
+    enableBeautifyCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        callEvents.onOpenBeautify(isChecked);
+      }
+    });
+
     displayLocalViewCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -159,14 +169,14 @@ public class CallFragment extends Fragment {
     if (args != null) {
       videoCallEnabled = args.getBoolean(CallActivity.EXTRA_VIDEO_CALL, true);
     }
-    if (!videoCallEnabled) {
+    /*{
       cameraSwitchButton.setVisibility(View.INVISIBLE);
       viewSomeOneCheckBox.setVisibility(View.INVISIBLE);
       openRemoteVideoCheckBox.setVisibility(View.INVISIBLE);
       displayRemoteViewCheckBox.setVisibility(View.INVISIBLE);
       sendLocalVideoCheckBox.setVisibility(View.INVISIBLE);
       displayLocalViewCheckBox.setVisibility(View.INVISIBLE);
-    }
+    }*/
 
     if (captureSliderEnabled) {
       //captureFormatSlider.setOnSeekBarChangeListener(

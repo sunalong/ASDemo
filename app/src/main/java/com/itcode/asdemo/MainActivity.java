@@ -26,7 +26,6 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.itcode.asdemo.R;
 import com.ztgame.voiceengine.NativeVoiceEngine;
 import com.ztgame.voiceengine.RTChatSDKVoiceListener;
 import com.ztgame.voiceengine.ReceiveDataFromC;
@@ -75,12 +74,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private static String TAG = MainActivity.class.getSimpleName();
 
     private final int kVoiceOnly = 1;
+    private final int kVideo_normalDefinition = 3;
+    private final int kVideo_highDefinition = 7;
+    private final int kVideo_veryHighDefinition = 11;
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        rtChatSdk = new NativeVoiceEngine();
+        rtChatSdk = NativeVoiceEngine.getInstance();
         rtChatSdk.register(this);
         rtChatSdk.setDebugLogEnabled(true);
         receiveDataFromC = new ReceiveDataFromC();
@@ -90,24 +93,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                 Log.i(TAG, "-回调到MainActivity中-jni_log----cmdType:" + cmdType + " error:" + error + " dataPtr:" + dataPtr + " dataSize:" + dataSize);
                 switch (cmdType) {
                     case 1://初始化
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "初始化完毕" + error, 0).show();
-                            }
-                        });
+                    {
+                        Toast.makeText(MainActivity.this, "初始化完毕" + error, Toast.LENGTH_SHORT).show();
                         rtChatSdk.setParams(FileURL, AppID);
-                        Log.i(TAG, "-MainActivity-初始化完毕------lala" + error);
                         break;
+                    }
                     case 7://进入房间
-                        Log.i(TAG, "-MainActivity-joinRoom------lala" + error);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "进入房间" + error, 0).show();
-                            }
-                        });
-                        break;
+                    {
+                        Toast.makeText(MainActivity.this, "进入房间" + error, 0).show();
+                    }
+
+                    break;
                     case 25://录音结束，上传成功
                         FileData fileData = getDataFromJson(dataPtr);
                         String voiceText;
@@ -139,8 +135,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
         setOnListener();
         etUserName.setText(getRandomString(10));
         etUserKey.setText(getRandomString(11));
-        setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
-//        rtChatSdk.requestPermissions();
+        //setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
 
     @Override
@@ -251,6 +246,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                     rtChatSdk.stopPlayLocalVoice();
                     btnPlay.setText("已经停止播放");
                 } else {
+//                    GameVoiceManager.GetIntance(this).startPlayingWithIndex(0, "http://uploadchat.ztgame.com.cn:10000/upload/2016120916/4344c9e0d0d6");
+//                    rtChatSdk.startPlayLocalVoice("http://uploadchat.ztgame.com.cn:10000/upload/2016120916/4344c9e0d0d6");//success w
                     if (downloadUrlLocal == null) {//当4.0禁止权限时，可以初始化，但不可录音，所以此url有可能为空
                         Toast.makeText(this, "downloadUrlLocal:" + downloadUrlLocal, 0).show();
                         return;
@@ -280,7 +277,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                 userKey = etUserKey.getText().toString().trim();
                 if (TextUtils.isEmpty(userName))
                     userName = "fuckName";
-                rtChatSdk.initSDK("3768c59536565afb", "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe");
+                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
                 Toast.makeText(this, "初始化返回的值：retCode:" + retCode, 0).show();
                 break;
             case R.id.btnCustomRoomServerAddr:
@@ -290,14 +287,24 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                     userName = "nameChange";
                 rtChatSdk.setUserInfo(userName, userKey);
 
+                rtChatSdk.setParams(FileURL, AppID);
+
                 String roomServerStr = etRoomServer.getText().toString().trim();
                 if(TextUtils.isEmpty(roomServerStr)){
                     Toast.makeText(this, "请输入IP:", 0).show();
                     return;
                 }
+                //roomServerStr = "192.168.114.4:18888";
                 rtChatSdk.customRoomServerAddr(roomServerStr);
                 break;
             case R.id.btnJoinRoom:
+                //int roomId = Integer.valueOf(etRoomId.getText().toString().trim());
+                //retCode = rtChatSdk.joinRoom("192.168.69.2", 6999, roomId, null);
+//                retCode = rtChatSdk.joinRoom("122.11.58.204", 7020, roomId, videoWindow);
+//                retCode = rtChatSdk.joinRoom("115.159.249.189", 8080, roomId, videoWindow);
+//                retCode = rtChatSdk.joinRoom("115.159.252.195", 7060, roomId, videoWindow);
+//                retCode = rtChatSdk.joinRoom("222.73.155.141", 7060, roomId, videoWindow);
+//                retCode = rtChatSdk.joinRoom("192.168.69.2", 6999, roomId, null);//内网使用
                 if (TextUtils.isEmpty(etRoomId.getText())) {
                     Toast.makeText(this, "请输入房间号", 0).show();
                     return;
@@ -308,6 +315,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
 
                 break;
             case R.id.btnLeaveRoom:
+//                retCode = rtChatSdk.leaveRoom();
                 retCode = rtChatSdk.requestLeavePlatformRoom();
                 Toast.makeText(this, "离开房间返回的值：retCode:" + retCode, 0).show();
                 break;
@@ -353,6 +361,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
         }
     }
 
+    @Override
+    public void onBackPressed(){
+        NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
+        super.onBackPressed();
+    }
 
     private static FileData getDataFromJson(String msg) {
         try {

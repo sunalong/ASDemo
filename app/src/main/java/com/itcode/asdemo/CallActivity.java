@@ -7,30 +7,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 import com.itcode.asdemo.ui.PercentFrameLayout;
-import com.itcode.asdemo.util.UnhandledExceptionHandler;
+import com.ztgame.videoengine.NativeVideoEngine;
 import com.ztgame.videoengine.RTChatVideoClient;
+import com.ztgame.videoengine.VideoEngineImpl;
 import com.ztgame.voiceengine.NativeVoiceEngine;
 
-import org.webrtc.EglBase;
 import org.webrtc.RendererCommon.ScalingType;
 import org.webrtc.SurfaceViewRenderer;
-import org.webrtc.VideoRenderer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CallActivity extends Activity implements RTChatVideoClient.RTChatVideoEvents,CallFragment.OnCallEvents {
-    private static final String TAG = "CallRTCClient";
+  private static final String TAG = "CallRTCClient";
 
   public static final String EXTRA_USERNAME = "com.ztgametest.USERNAME";
   public static final String EXTRA_VIDEO_CALL = "org.appspot.apprtc.VIDEO_CALL";
@@ -61,17 +58,13 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
   private static final int REMOTE_WIDTH = 100;
   private static final int REMOTE_HEIGHT = 100;
   private RTChatVideoClient rtchatvideoclient = null;
-  private EglBase rootEglBase;
   private SurfaceViewRenderer localRender;
   private SurfaceViewRenderer remoteRenderScreen;
-  private final List<VideoRenderer.Callbacks> remoteRenderers =
-      new ArrayList<VideoRenderer.Callbacks>();
   private PercentFrameLayout localRenderLayout;
   private PercentFrameLayout remoteRenderLayout;
   private ScalingType scalingType;
   private Toast logToast;
   private boolean activityRunning;
-  private boolean iceConnected;
   private boolean isError;
   private boolean callControlFragmentVisible = true;
   private long callStartedTimeMs = 0;
@@ -87,27 +80,33 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
   private boolean videoCallEnabled;
   private String userName = "";
 
+  private VideoEngineImpl mVideoEngineImp;
+  private NativeVideoEngine mNVEngine;
+  private boolean isFrontCamera;
+
+
+
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Thread.setDefaultUncaughtExceptionHandler(new UnhandledExceptionHandler(this));
 
     // Set window styles for fullscreen-window size. Needs to be done before
     // adding content.
     requestWindowFeature(Window.FEATURE_NO_TITLE);
-    getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON
+    /*getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON
         | LayoutParams.FLAG_DISMISS_KEYGUARD | LayoutParams.FLAG_SHOW_WHEN_LOCKED
         | LayoutParams.FLAG_TURN_SCREEN_ON);
     getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    */
     setContentView(R.layout.activity_call);
 
-    iceConnected = false;
     scalingType = ScalingType.SCALE_ASPECT_FILL;
 
     // Create UI controls.
-    localRender = (SurfaceViewRenderer) findViewById(R.id.local_video_view);
-    remoteRenderScreen = (SurfaceViewRenderer) findViewById(R.id.remote_video_view);
+    //localRender = (SurfaceViewRenderer) findViewById(R.id.local_video_view);
+    //remoteRenderScreen = (SurfaceViewRenderer) findViewById(R.id.remote_video_view);
     localRenderLayout = (PercentFrameLayout) findViewById(R.id.local_video_layout);
     remoteRenderLayout = (PercentFrameLayout) findViewById(R.id.remote_video_layout);
     callFragment = new CallFragment();
@@ -121,23 +120,33 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
       }
     };
 
-    localRender.setOnClickListener(listener);
-    remoteRenderScreen.setOnClickListener(listener);
-    //remoteRenderers.add(remoteRenderScreen);
-
     final Intent intent = getIntent();
-
     userName = intent.getStringExtra(EXTRA_USERNAME);
 
+    mVideoEngineImp = VideoEngineImpl.getInstance();
+    mNVEngine = NativeVideoEngine.getInstance();
+    isFrontCamera = true;
+
     // Create video renderers.
-    rootEglBase = EglBase.create();
-    localRender.init(rootEglBase.getEglBaseContext(), null);
-    remoteRenderScreen.init(rootEglBase.getEglBaseContext(), null);
+    //rootEglBase = EglBase.create();
+    //localRender.init(rootEglBase.getEglBaseContext(), null);
+    //remoteRenderScreen.init(rootEglBase.getEglBaseContext(), null);
+
+    localRender =(SurfaceViewRenderer)mNVEngine.createRenderView();
+    remoteRenderScreen = (SurfaceViewRenderer)mNVEngine.createRenderView();
+
+
+
+    localRenderLayout.addView(localRender);
+    remoteRenderLayout.addView(remoteRenderScreen);
+
+    localRender.setOnClickListener(listener);
+    remoteRenderScreen.setOnClickListener(listener);
 
     localRender.setZOrderMediaOverlay(true);
     localRender.setEnableHardwareScaler(true /* enabled */);
     remoteRenderScreen.setEnableHardwareScaler(true /* enabled */);
-    updateVideoView();
+    //updateVideoView();
 
 
     int videoWidth = intent.getIntExtra(EXTRA_VIDEO_WIDTH, 0);
@@ -145,37 +154,31 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
 
     screencaptureEnabled = intent.getBooleanExtra(EXTRA_SCREENCAPTURE, false);
     // If capturing format is not specified for screencapture, use screen resolution.
-    if (screencaptureEnabled && videoWidth == 0 && videoHeight == 0) {
+    if (screencaptureEnabled /*&& videoWidth == 0 && videoHeight == 0*/) {
       DisplayMetrics displayMetrics = new DisplayMetrics();
-      WindowManager windowManager =
-          (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
+      WindowManager windowManager = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
       windowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
       videoWidth = displayMetrics.widthPixels;
       videoHeight = displayMetrics.heightPixels;
     }
 
+    videoCallEnabled = true;
 
+    // Send intent arguments to fragments.
+    callFragment.setArguments(intent.getExtras());
+    hudFragment.setArguments(intent.getExtras());
+    // Activate call and HUD fragments and start the call.
+    FragmentTransaction ft = getFragmentManager().beginTransaction();
+    ft.add(R.id.call_fragment_container, callFragment);
+    ft.add(R.id.hud_fragment_container, hudFragment);
+    ft.commit();
 
-      videoCallEnabled = true;
-
-        // Send intent arguments to fragments.
-        callFragment.setArguments(intent.getExtras());
-        hudFragment.setArguments(intent.getExtras());
-        // Activate call and HUD fragments and start the call.
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(R.id.call_fragment_container, callFragment);
-        ft.add(R.id.hud_fragment_container, hudFragment);
-        ft.commit();
-
-    rtchatvideoclient = RTChatVideoClient.getInstance();
-    rtchatvideoclient.createPeerConnectionFactory(getApplicationContext(), false, CallActivity.this);
-
-        if (screencaptureEnabled) {
-            MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) getApplication().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-            startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), CAPTURE_PERMISSION_REQUEST_CODE);
-        }else {
-            startCall();
-        }
+    if (screencaptureEnabled) {
+      MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) getApplication().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+      startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), CAPTURE_PERMISSION_REQUEST_CODE);
+    }else {
+      startCall();
+    }
   }
 
   @Override
@@ -189,7 +192,7 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
 
 
   // Activity interfaces
-  @Override
+  /*@Override
   public void onStop() {
     super.onStop();
     activityRunning = false;
@@ -205,24 +208,32 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
     super.onStart();
     activityRunning = true;
     // Video is not paused for screencapture. See onPause.
-    if (rtchatvideoclient != null && !screencaptureEnabled) {
-      rtchatvideoclient.startVideoSource();
-    }
+    //if (rtchatvideoclient != null && !screencaptureEnabled) {
+    //  rtchatvideoclient.startVideoSource();
+    //}
   }
-
+*/
   @Override
   protected void onDestroy() {
-    Thread.setDefaultUncaughtExceptionHandler(null);
-
-    NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
+    //Thread.setDefaultUncaughtExceptionHandler(null);
 
     if (logToast != null) {
       logToast.cancel();
     }
     activityRunning = false;
-    rootEglBase.release();
+
     super.onDestroy();
   }
+
+
+  @Override
+  public void onBackPressed(){
+    mNVEngine.destroyRenderView(localRender);
+    mNVEngine.destroyRenderView(remoteRenderScreen);
+    NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
+    super.onBackPressed();
+  }
+
 
   // CallFragment.OnCallEvents interface implementation.
   @Override
@@ -232,53 +243,64 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
 
   @Override
   public void onCameraSwitch() {
-    //if (rtchatvideoclient != null) {
-    //  rtchatvideoclient.switchCamera();
-    //}
+    isFrontCamera = ! isFrontCamera;
+    if(isFrontCamera) {
+      mNVEngine.switchCamera(VideoActivity.enVideoSource.kVideoSourceFrontCamera.ordinal()); //front
+    }
+    else {
+      mNVEngine.switchCamera(VideoActivity.enVideoSource.kVideoSourceBackCamera.ordinal()); //back
+    }
   }
 
   @Override
   public void onOneViewSwitch(boolean isChecked) {
-    if (rtchatvideoclient != null) {
-        String msg;
-        if (isChecked) {
-            msg = "切换到单人模式观看";
-          rtchatvideoclient.setSomeOneView(userName);
-        }
-        else {
-            msg = "切换到多人模式观看";
-          rtchatvideoclient.setSomeOneView(null);
-        }
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    String msg;
+    if (isChecked) {
+      msg = "切换到单人模式观看";
+      mNVEngine.observerSomeOneVideo(userName);
     }
+    else {
+      msg = "切换到多人模式观看";
+      mNVEngine.observerSomeOneVideo("");
+    }
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
   }
+
   @Override
   public void onOpenRemoteVideo(boolean isChecked) {
-    /*if (rtchatvideoclient != null) {
-      rtchatvideoclient.enableReceviceRemoteVideo(isChecked);
-      if(isChecked)
-        Toast.makeText(this, "打开接受远端视频", Toast.LENGTH_LONG).show();
-      else
-        Toast.makeText(this, "关闭接受远端视频", Toast.LENGTH_LONG).show();
-    }*/
+
   }
 
-    @Override
-    public void onDisplayRemoteView(boolean isChecked) {
-        if (rtchatvideoclient != null) {
-          rtchatvideoclient.enableRemoteView(isChecked,remoteRenderScreen);
-            if(isChecked)
-                Toast.makeText(this, "显示远端视频", Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(this, "关闭远端视频", Toast.LENGTH_LONG).show();
-        }
+  @Override
+  public void onDisplayRemoteView(boolean isChecked) {
+    if(isChecked) {
+      mNVEngine.startObserverRemoteVideo(remoteRenderScreen);
+      Toast.makeText(this, "显示远端视频", Toast.LENGTH_LONG).show();
+      updateVideoView();
     }
+    else {
+      mNVEngine.stopObserverRemoteVideo();
+      Toast.makeText(this, "关闭远端视频", Toast.LENGTH_LONG).show();
+      updateVideoView1();
+    }
+  }
+
+  @Override
+  public void onOpenBeautify(boolean isChecked){
+    mNVEngine.enableBeautify(isChecked);
+    if(isChecked){
+      Toast.makeText(this, "打开美颜", Toast.LENGTH_LONG).show();
+    }
+    else
+    {
+      Toast.makeText(this, "关闭美颜", Toast.LENGTH_LONG).show();
+    }
+  }
 
 
-    @Override
-    public void onSendLocalVideo(boolean isChecked) {
-        /*if (rtchatvideoclient != null) {
-          rtchatvideoclient.enableSendLocalVideo(isChecked);
+  @Override
+  public void onSendLocalVideo(boolean isChecked) {
+        /*
             if(isChecked){
               Toast.makeText(this, "发送本地视频", Toast.LENGTH_LONG).show();
             }
@@ -288,19 +310,18 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
             }
 
         }*/
-    }
+  }
 
 
-    @Override
-    public void onDisplayLocalView(boolean isChecked) {
-        if (rtchatvideoclient != null) {
-          rtchatvideoclient.enableLocalView(isChecked, localRender);
-            if(isChecked)
-                Toast.makeText(this, "显示近端视频", Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(this, "关闭近端视频", Toast.LENGTH_LONG).show();
-        }
-    }
+  @Override
+  public void onDisplayLocalView(boolean isChecked) {
+        /*mNVEngine.observerLocalVideoWindow(isChecked, localRender);
+        if(isChecked)
+            Toast.makeText(this, "显示近端视频", Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(this, "关闭近端视频", Toast.LENGTH_LONG).show();
+            */
+  }
 
 
 
@@ -322,6 +343,7 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
     if (rtchatvideoclient != null) {
       micEnabled = !micEnabled;
     }
+    NativeVoiceEngine.getInstance().setSendVoice(micEnabled);
     return micEnabled;
   }
 
@@ -344,6 +366,19 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
     ft.commit();
   }
 
+  private void updateVideoView1() {
+    localRenderLayout.setPosition(REMOTE_X, REMOTE_Y, REMOTE_WIDTH, REMOTE_HEIGHT);
+    localRender.setScalingType(scalingType);
+    localRender.setMirror(false);
+
+    remoteRenderLayout.setPosition(LOCAL_X_CONNECTED, LOCAL_Y_CONNECTED, LOCAL_WIDTH_CONNECTED, LOCAL_HEIGHT_CONNECTED);
+    remoteRenderScreen.setScalingType(ScalingType.SCALE_ASPECT_FIT);
+    remoteRenderScreen.setMirror(true);
+
+    localRender.requestLayout();
+    remoteRenderScreen.requestLayout();
+  }
+
   private void updateVideoView() {
     remoteRenderLayout.setPosition(REMOTE_X, REMOTE_Y, REMOTE_WIDTH, REMOTE_HEIGHT);
     remoteRenderScreen.setScalingType(scalingType);
@@ -357,36 +392,21 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
     remoteRenderScreen.requestLayout();
   }
 
-    private void startCall() {
-        callStartedTimeMs = System.currentTimeMillis();
-        if (videoCallEnabled) {
-          rtchatvideoclient.createPeerConnection(rootEglBase.getEglBaseContext(), localRender, remoteRenderScreen);
-        }
+  private void startCall() {
+    callStartedTimeMs = System.currentTimeMillis();
+    if (videoCallEnabled) {
+      //rtchatvideoclient.createPeerConnection(rootEglBase.getEglBaseContext(), localRender, remoteRenderScreen);
+      mNVEngine.startSendVideo();
+      mNVEngine.observerLocalVideoWindow(true,localRender);
+    }
   }
 
   // Disconnect from remote resources, dispose of local resources, and exit.
   private void disconnect() {
     activityRunning = false;
-
-    if (rtchatvideoclient != null) {
-      rtchatvideoclient.close();
-      rtchatvideoclient = null;
-    }
-    if (localRender != null) {
-      localRender.release();
-      localRender = null;
-    }
-
-    if (remoteRenderScreen != null) {
-      remoteRenderScreen.release();
-      remoteRenderScreen = null;
-    }
-
-    if (iceConnected && !isError) {
-      setResult(RESULT_OK);
-    } else {
-      setResult(RESULT_CANCELED);
-    }
+    mNVEngine.destroyRenderView(localRender);
+    mNVEngine.destroyRenderView(remoteRenderScreen);
+    NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
     finish();
   }
 
@@ -396,19 +416,19 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
       disconnect();
     } else {
       new AlertDialog.Builder(this)
-          .setTitle(getText(R.string.channel_error_title))
-          .setMessage(errorMessage)
-          .setCancelable(false)
-          .setNeutralButton(R.string.ok,
-              new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                  dialog.cancel();
-                  disconnect();
-                }
-              })
-          .create()
-          .show();
+              .setTitle(getText(R.string.channel_error_title))
+              .setMessage(errorMessage)
+              .setCancelable(false)
+              .setNeutralButton(R.string.ok,
+                      new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                          dialog.cancel();
+                          disconnect();
+                        }
+                      })
+              .create()
+              .show();
     }
   }
 

@@ -5,25 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ztgametest.PercentFrameLayout
+    <com.itcode.asdemo.ui.PercentFrameLayout
         android:id="@+id/remote_video_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <org.webrtc.SurfaceViewRenderer
+        <!--<org.webrtc.SurfaceViewRenderer
             android:id="@+id/remote_video_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </com.ztgametest.PercentFrameLayout>
+            android:layout_height="wrap_content" /> -->
+    </com.itcode.asdemo.ui.PercentFrameLayout>
 
-    <com.ztgametest.PercentFrameLayout
+    <com.itcode.asdemo.ui.PercentFrameLayout
         android:id="@+id/local_video_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <org.webrtc.SurfaceViewRenderer
+        <!--<org.webrtc.SurfaceViewRenderer
             android:id="@+id/local_video_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </com.ztgametest.PercentFrameLayout>
+            android:layout_height="wrap_content"/> -->
+    </com.itcode.asdemo.ui.PercentFrameLayout>
 
     <FrameLayout
         android:id="@+id/call_fragment_container"

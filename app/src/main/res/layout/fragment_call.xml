@@ -15,45 +15,45 @@
         android:layout_margin="8dp"/>
 
     <LinearLayout
-           android:id="@+id/buttons_call_container"
-           android:orientation="horizontal"
-           android:layout_above="@+id/capture_format_text_call"
-           android:layout_alignWithParentIfMissing="true"
-           android:layout_marginBottom="32dp"
-           android:layout_centerHorizontal="true"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content">
-
-       <ImageButton
-           android:id="@+id/button_call_disconnect"
-           android:background="@mipmap/disconnect"
-           android:contentDescription="@string/disconnect_call"
-           android:layout_marginEnd="16dp"
-           android:layout_width="48dp"
-           android:layout_height="48dp"/>
-
-       <ImageButton
-           android:id="@+id/button_call_switch_camera"
-           android:background="@android:drawable/ic_menu_camera"
-           android:contentDescription="@string/switch_camera"
-           android:layout_marginEnd="8dp"
-           android:layout_width="48dp"
-           android:layout_height="48dp"/>
+        android:id="@+id/buttons_call_container"
+        android:orientation="horizontal"
+        android:layout_above="@+id/capture_format_text_call"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_marginBottom="32dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <ImageButton
-           android:id="@+id/button_call_scaling_mode"
-           android:background="@mipmap/ic_action_return_from_full_screen"
-           android:contentDescription="@string/disconnect_call"
-           android:layout_width="48dp"
-           android:layout_height="48dp"/>
+            android:id="@+id/button_call_disconnect"
+            android:background="@mipmap/disconnect"
+            android:contentDescription="@string/disconnect_call"
+            android:layout_marginEnd="16dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
 
-       <ImageButton
-           android:id="@+id/button_call_toggle_mic"
-           android:background="@android:drawable/ic_btn_speak_now"
-           android:contentDescription="@string/toggle_mic"
-           android:layout_marginEnd="8dp"
-           android:layout_width="48dp"
-           android:layout_height="48dp"/>
+        <ImageButton
+            android:id="@+id/button_call_switch_camera"
+            android:background="@android:drawable/ic_menu_camera"
+            android:contentDescription="@string/switch_camera"
+            android:layout_marginEnd="8dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
+
+        <ImageButton
+            android:id="@+id/button_call_scaling_mode"
+            android:background="@mipmap/ic_action_return_from_full_screen"
+            android:contentDescription="@string/disconnect_call"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
+
+        <ImageButton
+            android:id="@+id/button_call_toggle_mic"
+            android:background="@android:drawable/ic_btn_speak_now"
+            android:contentDescription="@string/toggle_mic"
+            android:layout_marginEnd="8dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
     </LinearLayout>
 
     <TextView
@@ -90,6 +90,7 @@
         android:layout_below="@+id/switch_one_view_checkbox"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="27dp"
+        android:visibility="gone"
         android:id="@+id/open_remote_video_checkbox" />
 
     <CheckBox
@@ -98,16 +99,26 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:id="@+id/display_remote_view_checkbox"
-        android:layout_below="@+id/open_remote_video_checkbox"
+        android:layout_below="@+id/switch_one_view_checkbox"
         android:layout_centerHorizontal="true"/>
 
     <CheckBox
-        android:text="发送本地视频"
+        android:text="打开美颜"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/display_remote_view_checkbox"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="19dp"
+        android:id="@+id/open_beautify_video_checkbox"/>
+
+    <CheckBox
+        android:text="发送本地视频"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/open_beautify_video_checkbox"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp"
+        android:visibility="gone"
         android:id="@+id/send_local_video_checkbox"/>
 
     <CheckBox
@@ -116,6 +127,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:visibility="gone"
         android:id="@+id/display_local_view_checkbox"/>
 
 
