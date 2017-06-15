@@ -16,7 +16,6 @@
 package com.itcode.asdemo;
 
 import android.app.Activity;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,16 +33,16 @@ import org.json.JSONObject;
 
 import java.util.Random;
 
-//import com.alibaba.fastjson.JSON;
 
 public class MainActivity extends Activity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
     private Button btnInitSdk;
+    private Button btnSetUserInfo;
     private Button btnCustomRoomServerAddr;
     private Button btnJoinRoom;
     private Button btnLeaveRoom;
     private Button btnSetLouderSpeaker;
-    private Button btnAdjustVolume;
+    private Button btnCloseLouderSpeaker;
 
     private RadioGroup rgVoiceToText;
 
@@ -52,8 +51,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private Button btnVoiceMute;
     private Button btnGetAudioSetting;
 
-    private Button btnSetParams;
-    private Button btnCallback;
 
     private Button btnRecord;
     private Button btnPlay;
@@ -62,8 +59,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
 
     private EditText etRoomServer;
     private EditText etRoomId;
-    private EditText etUserName;
-    private EditText etUserKey;
 
     private NativeVoiceEngine rtChatSdk;
     ReceiveDataFromC receiveDataFromC;
@@ -74,11 +69,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private static String TAG = MainActivity.class.getSimpleName();
 
     private final int kVoiceOnly = 1;
-    private final int kVideo_normalDefinition = 3;
-    private final int kVideo_highDefinition = 7;
-    private final int kVideo_veryHighDefinition = 11;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,8 +123,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
         initView();
 
         setOnListener();
-        etUserName.setText(getRandomString(10));
-        etUserKey.setText(getRandomString(11));
+        userName = getRandomString(10);
+        userKey = getRandomString(11);
         //setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
 
@@ -148,19 +138,18 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private void initView() {
         rgVoiceToText = (RadioGroup) findViewById(R.id.rgVoiceToText);
         btnInitSdk = (Button) findViewById(R.id.btnInitSdk);
+        btnSetUserInfo = (Button) findViewById(R.id.btnSetUserInfo);
         btnCustomRoomServerAddr = (Button) findViewById(R.id.btnCustomRoomServerAddr);
         btnJoinRoom = (Button) findViewById(R.id.btnJoinRoom);
         btnLeaveRoom = (Button) findViewById(R.id.btnLeaveRoom);
         btnSetLouderSpeaker = (Button) findViewById(R.id.btnSetLouderSpeaker);
-        btnAdjustVolume = (Button) findViewById(R.id.btnAdjustVolume);
+        btnCloseLouderSpeaker = (Button) findViewById(R.id.btnCloseLouderSpeaker);
 
         btnUpVolume = (Button) findViewById(R.id.btnUpVolume);
         btnDownVolume = (Button) findViewById(R.id.btnDownVolume);
         btnVoiceMute = (Button) findViewById(R.id.btnVoiceMute);
         btnGetAudioSetting = (Button) findViewById(R.id.btnGetAudioSetting);
 
-        btnSetParams = (Button) findViewById(R.id.btnSetParams);
-        btnCallback = (Button) findViewById(R.id.btnCallback);
 
         btnRecord = (Button) findViewById(R.id.btnRecord);
         btnPlay = (Button) findViewById(R.id.btnPlay);
@@ -169,8 +158,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
 
         etRoomServer = (EditText) findViewById(R.id.etRoomServer);
         etRoomId = (EditText) findViewById(R.id.etRoomId);
-        etUserName = (EditText) findViewById(R.id.etUserName);
-        etUserKey = (EditText) findViewById(R.id.etUserKey);
         etResult = (EditText) findViewById(R.id.etResult);
     }
 
@@ -185,16 +172,15 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
         btnUpVolume.setOnClickListener(this);
         btnDownVolume.setOnClickListener(this);
         btnInitSdk.setOnClickListener(this);
+        btnSetUserInfo.setOnClickListener(this);
         btnCustomRoomServerAddr.setOnClickListener(this);
         btnJoinRoom.setOnClickListener(this);
         btnLeaveRoom.setOnClickListener(this);
         btnSetLouderSpeaker.setOnClickListener(this);
-        btnAdjustVolume.setOnClickListener(this);
+        btnCloseLouderSpeaker.setOnClickListener(this);
         btnVoiceMute.setOnClickListener(this);
         btnPlay.setOnClickListener(this);
         btnRecord.setOnClickListener(this);
-        btnCallback.setOnClickListener(this);
-        btnSetParams.setOnClickListener(this);
         btnCancelRecord.setOnClickListener(this);
         btnChangeUser.setOnClickListener(this);
         btnGetAudioSetting.setOnClickListener(this);
@@ -204,27 +190,74 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     boolean mute = true;
     boolean isPlaying = false;
     boolean isRecording = false;
-
+    String userName;
+    String userKey;
     @Override
     public void onClick(View v) {
         int retCode = 0;
-        String userName;
-        String userKey;
         switch (v.getId()) {
-            case R.id.btnChangeUser:
-                userName = etUserName.getText().toString().trim();
-                userKey = etUserKey.getText().toString().trim();
+            case R.id.btnInitSdk:
+                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
+                Toast.makeText(this, "初始化返回的值：retCode:" + retCode, 0).show();
+                break;
+            case R.id.btnSetUserInfo:
                 if (TextUtils.isEmpty(userName))
                     userName = "nameChange";
                 rtChatSdk.setUserInfo(userName, userKey);
-                Toast.makeText(MainActivity.this, "改变语音聊天登录用户信息", 0).show();
+                rtChatSdk.setParams(FileURL, AppID);
                 break;
-            case R.id.btnCancelRecord:
-                rtChatSdk.cancelRecordedVoice();
-                isRecording = false;
-                btnRecord.setText("已经取消录音");
-                Toast.makeText(MainActivity.this, "取消录音", 0).show();
+            case R.id.btnCustomRoomServerAddr:
+                String roomServerStr = etRoomServer.getText().toString().trim();
+                if(TextUtils.isEmpty(roomServerStr)){
+                    Toast.makeText(this, "请输入IP:", 0).show();
+                    return;
+                }
+                //roomServerStr = "192.168.114.4:18888";
+                rtChatSdk.customRoomServerAddr(roomServerStr);
                 break;
+            case R.id.btnJoinRoom:
+                if (TextUtils.isEmpty(etRoomId.getText())) {
+                    Toast.makeText(this, "请输入房间号", 0).show();
+                    return;
+                } else {
+                    retCode = rtChatSdk.requestJoinPlatformRoom(etRoomId.getText().toString().trim(), kVoiceOnly);
+                    Toast.makeText(this, "进入房间返回的值：retCode:" + retCode, 0).show();
+                }
+                break;
+            case R.id.btnLeaveRoom:
+//                retCode = rtChatSdk.leaveRoom();
+                retCode = rtChatSdk.requestLeavePlatformRoom();
+                Toast.makeText(this, "离开房间返回的值：retCode:" + retCode, 0).show();
+                break;
+            case R.id.btnSetLouderSpeaker:
+                retCode = rtChatSdk.setLouderSpeaker(true);
+                Toast.makeText(this, "打开扬声器:" + retCode, 0).show();
+                break;
+            case R.id.btnUpVolume:
+                volumeValue += 1;
+                if (volumeValue >= 10)
+                    volumeValue = 10;
+                retCode = rtChatSdk.adjustSpeakerVolume(volumeValue);
+                Toast.makeText(this, volumeValue + "加声音：retCode:" + retCode, 0).show();
+                break;
+            case R.id.btnDownVolume:
+                volumeValue -= 1;
+                if (volumeValue <= 0)
+                    volumeValue = 0;
+                retCode = rtChatSdk.adjustSpeakerVolume(volumeValue);
+                Toast.makeText(this, volumeValue + "减声音：retCode:" + retCode, 0).show();
+                break;
+            case R.id.btnCloseLouderSpeaker:
+                //TODO:获取操作设备的调整值
+                retCode = rtChatSdk.setLouderSpeaker(false);
+                Toast.makeText(this, "关闭扬声器:" + retCode, 0).show();
+                break;
+            case R.id.btnVoiceMute:
+                //设置静音与否
+                rtChatSdk.setSendVoice(!mute);
+                mute = !mute;
+                break;
+
             case R.id.btnRecord:
                 if (isRecording) {
                     rtChatSdk.stopRecordVoice();
@@ -257,82 +290,21 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                 }
                 isPlaying = !isPlaying;
                 break;
-            case R.id.btnUpVolume:
-                volumeValue += 1;
-                if (volumeValue >= 10)
-                    volumeValue = 10;
-                retCode = rtChatSdk.adjustSpeakerVolume(volumeValue);
-                Toast.makeText(this, volumeValue + "加声音：retCode:" + retCode, 0).show();
+            case R.id.btnCancelRecord:
+                rtChatSdk.cancelRecordedVoice();
+                isRecording = false;
+                btnRecord.setText("已经取消录音");
+                Toast.makeText(MainActivity.this, "取消录音", 0).show();
                 break;
-            case R.id.btnDownVolume:
-                volumeValue -= 5;
-                if (volumeValue <= 0)
-                    volumeValue = 0;
-                retCode = rtChatSdk.adjustSpeakerVolume(volumeValue);
-                Toast.makeText(this, volumeValue + "减声音：retCode:" + retCode, 0).show();
-
-                break;
-            case R.id.btnInitSdk:
-                userName = etUserName.getText().toString().trim();
-                userKey = etUserKey.getText().toString().trim();
-                if (TextUtils.isEmpty(userName))
-                    userName = "fuckName";
-                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
-                Toast.makeText(this, "初始化返回的值：retCode:" + retCode, 0).show();
-                break;
-            case R.id.btnCustomRoomServerAddr:
-                userName = etUserName.getText().toString().trim();
-                userKey = etUserKey.getText().toString().trim();
+            case R.id.btnChangeUser:
+                userName = getRandomString(10);
+                userKey = getRandomString(11);
                 if (TextUtils.isEmpty(userName))
                     userName = "nameChange";
                 rtChatSdk.setUserInfo(userName, userKey);
+                Toast.makeText(MainActivity.this, "改变语音聊天登录用户信息", 0).show();
+                break;
 
-                rtChatSdk.setParams(FileURL, AppID);
-
-                String roomServerStr = etRoomServer.getText().toString().trim();
-                if(TextUtils.isEmpty(roomServerStr)){
-                    Toast.makeText(this, "请输入IP:", 0).show();
-                    return;
-                }
-                //roomServerStr = "192.168.114.4:18888";
-                rtChatSdk.customRoomServerAddr(roomServerStr);
-                break;
-            case R.id.btnJoinRoom:
-                //int roomId = Integer.valueOf(etRoomId.getText().toString().trim());
-                //retCode = rtChatSdk.joinRoom("192.168.69.2", 6999, roomId, null);
-//                retCode = rtChatSdk.joinRoom("122.11.58.204", 7020, roomId, videoWindow);
-//                retCode = rtChatSdk.joinRoom("115.159.249.189", 8080, roomId, videoWindow);
-//                retCode = rtChatSdk.joinRoom("115.159.252.195", 7060, roomId, videoWindow);
-//                retCode = rtChatSdk.joinRoom("222.73.155.141", 7060, roomId, videoWindow);
-//                retCode = rtChatSdk.joinRoom("192.168.69.2", 6999, roomId, null);//内网使用
-                if (TextUtils.isEmpty(etRoomId.getText())) {
-                    Toast.makeText(this, "请输入房间号", 0).show();
-                    return;
-                } else {
-                    retCode = rtChatSdk.requestJoinPlatformRoom(etRoomId.getText().toString().trim(), kVoiceOnly);
-                    Toast.makeText(this, "进入房间返回的值：retCode:" + retCode, 0).show();
-                }
-
-                break;
-            case R.id.btnLeaveRoom:
-//                retCode = rtChatSdk.leaveRoom();
-                retCode = rtChatSdk.requestLeavePlatformRoom();
-                Toast.makeText(this, "离开房间返回的值：retCode:" + retCode, 0).show();
-                break;
-            case R.id.btnSetLouderSpeaker:
-                retCode = rtChatSdk.setLouderSpeaker(true);
-                Toast.makeText(this, "打开扬声器:" + retCode, 0).show();
-                break;
-            case R.id.btnAdjustVolume:
-                //TODO:获取操作设备的调整值
-                retCode = rtChatSdk.setLouderSpeaker(false);
-                Toast.makeText(this, "关闭扬声器:" + retCode, 0).show();
-                break;
-            case R.id.btnVoiceMute:
-                //设置静音与否
-                rtChatSdk.setSendVoice(!mute);
-                mute = !mute;
-                break;
         }
     }
 

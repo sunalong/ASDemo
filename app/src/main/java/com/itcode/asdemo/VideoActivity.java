@@ -3,12 +3,14 @@ package com.itcode.asdemo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.Button;
 
@@ -50,7 +52,7 @@ public class VideoActivity extends Activity {
     private NativeVideoEngine mNVEngine;
 
     private boolean isBeautify;
-
+    private SeekBar sbVoiceChange;
     enum enVideoSource
     {
         kVideoSourceNull,
@@ -75,7 +77,7 @@ public class VideoActivity extends Activity {
 
         //init surface view
         localSurfaceViewContainer = (RelativeLayout) findViewById(R.id.surfaceViewLocalContainer);
-        remoteSurfaceViewContainer = (RelativeLayout) findViewById(R.id.surfaceViewRemoteContainer);
+            remoteSurfaceViewContainer = (RelativeLayout) findViewById(R.id.surfaceViewRemoteContainer);
         glLocalSurfaceViewContainer = new SurfaceViewContainer(this);
         glRemoteSurfaceViewContainer = new SurfaceViewContainer(this);
         //add view
@@ -235,6 +237,25 @@ public class VideoActivity extends Activity {
                         mVideoEngineImp.SwitchSomeOneView("");
                 }
                 Toast.makeText(VideoActivity.this, msg, Toast.LENGTH_LONG).show();
+            }
+        });
+        sbVoiceChange = (SeekBar) findViewById(R.id.sbVoiceChange);
+        sbVoiceChange.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                int result = (int) (0.2 * i - 10);
+                Log.i("SeekBarFuck",i+"  b:"+b+" result:"+result);
+                int setVoiceChangeParm = NativeVoiceEngine.getInstance().setVoiceChangeParm(result);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
     }

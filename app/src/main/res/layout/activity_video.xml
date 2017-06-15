@@ -133,8 +133,7 @@
     </RelativeLayout>
 
 
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -142,7 +141,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/videoinitbutton"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
@@ -151,7 +150,7 @@
 
                 <LinearLayout
                     android:id="@+id/buttons_videocall_container"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_alignWithParentIfMissing="true"
                     android:layout_marginBottom="10dp"
                     android:layout_centerHorizontal="true"
@@ -163,9 +162,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/Button1"
+                        android:textSize="12sp"
                         android:onClick="jumpOnClick1"/>
+
                     <Button
                         android:text="打开美颜"
+                        android:textSize="12sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/initButton"
@@ -173,8 +175,7 @@
                         android:onClick="jumpOnClick1"/>
 
                 </LinearLayout>
-
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -227,6 +228,11 @@
             </LinearLayout>
 
         </LinearLayout>
-    </RelativeLayout>
+        <SeekBar
+            android:id="@+id/sbVoiceChange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="50"/>
+    </LinearLayout>
 
 </LinearLayout>

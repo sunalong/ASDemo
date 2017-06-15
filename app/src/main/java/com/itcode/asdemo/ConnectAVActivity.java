@@ -22,15 +22,16 @@ public class ConnectAVActivity extends Activity {
     private static final String TAG = "ConnectAVActivity";
     private static final int CONNECTION_REQUEST = 1;
 
-    //内网key
-    private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
-    private static final String innerAppId = "1fcfaa5cdc01502e";
-    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
+//    //内网key
+//    private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
+//    private static final String innerAppId = "1fcfaa5cdc01502e";
+//    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
 
-//    //外网key
-//    private static final String outerAppId = "3768c59536565afb";
-//    private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
-//    private static final String outerPlatformServerUrl = "115.159.251.79:8080";
+    //外网key
+    private static final String outerAppId = "3768c59536565afb";
+    private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
+//    private static final String outerPlatformServerUrl = "room.audio.mztgame.com";
+    private static final String outerPlatformServerUrl = "115.159.251.79:8080";
 
 
     private final int kVideo_normalDefinition = 3;
@@ -151,8 +152,8 @@ public class ConnectAVActivity extends Activity {
     }
 
     private void connectToRoom(String roomId) {
-
-        rtChatSdk.customRoomServerAddr(platformUrl);
+//若是外网，则不需要设置platformUrl
+//        rtChatSdk.customRoomServerAddr(platformUrl);
         int retCode;
         if (roomId == null) {
             Toast.makeText(this, "请输入房间号", Toast.LENGTH_SHORT).show();
@@ -182,14 +183,14 @@ public class ConnectAVActivity extends Activity {
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.initButton: {
-                //内网
-                appid = innerAppId;
-                appkey = innerAppKey;
-                platformUrl = innerPlatformServerUrl;
-//                //外网
-//                appid = outerAppId;
-//                appkey = outerAppKey;
-//                platformUrl = outerPlatformServerUrl;
+//                //内网
+//                appid = innerAppId;
+//                appkey = innerAppKey;
+//                platformUrl = innerPlatformServerUrl;
+                //外网
+                appid = outerAppId;
+                appkey = outerAppKey;
+                platformUrl = outerPlatformServerUrl;
                 rtChatSdk.initSDK(appid, appkey);
 
                 break;
