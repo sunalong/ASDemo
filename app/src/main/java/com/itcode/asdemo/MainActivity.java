@@ -70,6 +70,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
 
     private final int kVoiceOnly = 1;
 
+    //    //内网key
+//    private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
+//    private static final String innerAppId = "1fcfaa5cdc01502e";
+//    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
+
+    //外网key
+    private static final String outerAppId = "3768c59536565afb";
+    private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
+    //    private static final String outerPlatformServerUrl = "room.audio.mztgame.com";
+    private static final String outerPlatformServerUrl = "115.159.251.79:8080";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -192,12 +203,19 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     boolean isRecording = false;
     String userName;
     String userKey;
+    private String appid = "";
+    private String appkey = "";
+    private String platformUrl = "";
     @Override
     public void onClick(View v) {
         int retCode = 0;
         switch (v.getId()) {
             case R.id.btnInitSdk:
-                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
+                appid = outerAppId;
+                appkey = outerAppKey;
+                platformUrl = outerPlatformServerUrl;
+//                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
+                rtChatSdk.initSDK(appid, appkey);
                 Toast.makeText(this, "初始化返回的值：retCode:" + retCode, 0).show();
                 break;
             case R.id.btnSetUserInfo:

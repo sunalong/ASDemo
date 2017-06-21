@@ -60,6 +60,7 @@
 
         <activity
             android:name="VideoActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
         </activity>
 
