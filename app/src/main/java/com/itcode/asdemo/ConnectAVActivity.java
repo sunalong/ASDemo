@@ -19,6 +19,10 @@ import java.util.Random;
 
 
 public class ConnectAVActivity extends Activity {
+    public interface ReconnectListener {
+        public void reconnectListener(boolean closed);
+    }
+
     private static final String TAG = "ConnectAVActivity";
     private static final int CONNECTION_REQUEST = 1;
 
@@ -30,12 +34,12 @@ public class ConnectAVActivity extends Activity {
     //外网key
     private static final String outerAppId = "3768c59536565afb";
     private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
-//    private static final String outerPlatformServerUrl = "room.audio.mztgame.com";
+    //    private static final String outerPlatformServerUrl = "room.audio.mztgame.com";
     private static final String outerPlatformServerUrl = "115.159.251.79:8080";
 
 
     private final int kVideo_normalDefinition = 3;
-
+    public static ReconnectListener reconnectListener;
     private EditText roomEditText;
     private SharedPreferences sharedPref;
     private String keyprefRoom;
@@ -53,6 +57,7 @@ public class ConnectAVActivity extends Activity {
     private String appkey = "";
     private String platformUrl = "";
 
+    private boolean haveStartActivity = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,16 +84,24 @@ public class ConnectAVActivity extends Activity {
                         });
                         break;
                     case 7://进入房间
+                        Log.i("Test", "进入房间收到的返回值：" + cmdType + " error:" + error + " dataPtr:" + dataPtr);
+//                        Toast.makeText(ConnectAVActivity.this, dataPtr + System.currentTimeMillis(), Toast.LENGTH_LONG).show();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 String msg = "用户进入房间失败 ------";
+
                                 if (error == 1) {
-                                    msg = "用户进入房间成功 ------";
-                                    lauchTestVideoActiviy();
+                                    if (haveStartActivity) {//防断网重连
+                                        Log.i("Test", "已经进入房间，不再次启动本Activity");
+                                    } else {
+                                        msg = "用户进入房间成功 ------";
+                                        lauchTestVideoActiviy();
+                                        haveStartActivity = true;
+                                        Toast.makeText(ConnectAVActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                    Log.i(TAG, msg + error);
                                 }
-                                Toast.makeText(ConnectAVActivity.this, msg, Toast.LENGTH_SHORT).show();
-                                Log.i(TAG, msg + error);
                             }
                         });
                         break;
@@ -96,6 +109,13 @@ public class ConnectAVActivity extends Activity {
             }
         });
 
+        reconnectListener = new ReconnectListener() {
+            @Override
+            public void reconnectListener(boolean closed) {
+                haveStartActivity = false;
+                Log.i("Test", "回调，重置haveStartActivity为：" + haveStartActivity);
+            }
+        };
 
         // Get setting keys.
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -165,8 +185,10 @@ public class ConnectAVActivity extends Activity {
     }
 
     private void lauchTestVideoActiviy() {
+
         Intent intent = new Intent(this, VideoActivity.class);
         intent.putExtra("username", ObserverUserName);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivityForResult(intent, CONNECTION_REQUEST);
     }
 

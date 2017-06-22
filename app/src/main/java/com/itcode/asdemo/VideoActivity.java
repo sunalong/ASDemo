@@ -134,6 +134,7 @@ public class VideoActivity extends Activity {
 
                 NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
                 finish();
+                ConnectAVActivity.reconnectListener.reconnectListener(true);
             }
         });
 
@@ -264,9 +265,29 @@ public class VideoActivity extends Activity {
     }
 
     @Override
+    protected void onRestart() {
+        Log.i("Test", "onRestart()");
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i("Test", "onStart()");
+        super.onStart();
+    }
+
+    @Override
     protected void onDestroy() {
         finish();
+        ConnectAVActivity.reconnectListener.reconnectListener(true);
+        Log.i("Test", "onDestroy()");
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.i("Test", "onPause()");
+        super.onPause();
     }
 
     @Override
@@ -274,6 +295,7 @@ public class VideoActivity extends Activity {
         mNVEngine.destroyRenderView(glLocalSurfaceViewContainer.getSurfaceView());
         mNVEngine.destroyRenderView(glRemoteSurfaceViewContainer.getSurfaceView());
         NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
+        ConnectAVActivity.reconnectListener.reconnectListener(true);
         super.onBackPressed();
     }
 
