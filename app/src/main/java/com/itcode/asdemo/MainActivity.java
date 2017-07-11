@@ -238,7 +238,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                     Toast.makeText(this, "请输入房间号", 0).show();
                     return;
                 } else {
-                    retCode = rtChatSdk.requestJoinPlatformRoom(etRoomId.getText().toString().trim(), kVoiceOnly);
+                    retCode = rtChatSdk.requestJoinPlatformRoom(etRoomId.getText().toString().trim(), kVoiceOnly,6);
                     Toast.makeText(this, "进入房间返回的值：retCode:" + retCode, 0).show();
                 }
                 break;

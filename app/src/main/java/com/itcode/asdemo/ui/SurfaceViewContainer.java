@@ -38,7 +38,9 @@ public class SurfaceViewContainer extends RelativeLayout {
         setBackgroundColor(getResources().getColor(android.R.color.black));
         this.setLayoutParams(new LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT));
         //surfaceView = VideoEngineImpl.getInstance().CreateRenderView();
-        surfaceView = NativeVideoEngine.getInstance().createRenderView();
+        NativeVideoEngine nativeVideoEngine = NativeVideoEngine.getInstance();
+       surfaceView=  nativeVideoEngine.createRenderView();
+//        surfaceView = NativeVideoEngine.getInstance().createRenderView();
         if(surfaceView != null) {
             surfaceView.setLayoutParams(new LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
             addView(surfaceView);

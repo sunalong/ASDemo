@@ -179,7 +179,7 @@ public class ConnectAVActivity extends Activity {
             Toast.makeText(this, "请输入房间号", Toast.LENGTH_SHORT).show();
             return;
         } else {
-            retCode = rtChatSdk.requestJoinPlatformRoom(roomId, kVideo_normalDefinition);
+            retCode = rtChatSdk.requestJoinPlatformRoom(roomId, kVideo_normalDefinition,6);
             Log.d(TAG, "进入房间返回的值：retCode:" + retCode);
         }
     }
