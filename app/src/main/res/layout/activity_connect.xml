@@ -25,6 +25,7 @@
         android:id="@+id/button_live_test2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:onClick="OnClick"
         android:text="LiveTest" />
 
@@ -107,6 +108,7 @@
         <ImageButton
             android:id="@+id/connect_button"
             android:layout_width="48dp"
+            android:visibility="gone"
             android:layout_height="48dp"
             android:background="@android:drawable/sym_action_call"
             android:contentDescription="@string/connect_description" />
