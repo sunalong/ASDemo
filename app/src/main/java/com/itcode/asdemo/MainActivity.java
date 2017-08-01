@@ -71,15 +71,15 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private final int kVoiceOnly = 1;
 
     //    //内网key
-//    private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
-//    private static final String innerAppId = "1fcfaa5cdc01502e";
-//    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
+    private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
+    private static final String innerAppId = "1fcfaa5cdc01502e";
+    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
 
     //外网key
     private static final String outerAppId = "3768c59536565afb";
     private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
-    //    private static final String outerPlatformServerUrl = "room.audio.mztgame.com";
-    private static final String outerPlatformServerUrl = "115.159.251.79:8080";
+    private static final String outerPlatformServerUrl = "room.audio.mztgame.com";
+//    private static final String outerPlatformServerUrl = "115.159.251.79:8080";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -206,14 +206,23 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private String appid = "";
     private String appkey = "";
     private String platformUrl = "";
+    private static boolean isInnerNet = true;
+
     @Override
     public void onClick(View v) {
         int retCode = 0;
         switch (v.getId()) {
             case R.id.btnInitSdk:
-                appid = outerAppId;
-                appkey = outerAppKey;
-                platformUrl = outerPlatformServerUrl;
+                if (isInnerNet) {
+                    //内网
+                    appid = innerAppId;
+                    appkey = innerAppKey;
+                    platformUrl = innerPlatformServerUrl;
+                } else {
+                    appid = outerAppId;
+                    appkey = outerAppKey;
+                    platformUrl = outerPlatformServerUrl;
+                }
 //                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
                 rtChatSdk.initSDK(appid, appkey);
                 Toast.makeText(this, "初始化返回的值：retCode:" + retCode, 0).show();
@@ -223,14 +232,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                     userName = "nameChange";
                 rtChatSdk.setUserInfo(userName, userKey);
                 rtChatSdk.setParams(FileURL, AppID);
+                rtChatSdk.customRoomServerAddr(platformUrl);
                 break;
             case R.id.btnCustomRoomServerAddr:
                 String roomServerStr = etRoomServer.getText().toString().trim();
-                if(TextUtils.isEmpty(roomServerStr)){
+                if (TextUtils.isEmpty(roomServerStr)) {
                     Toast.makeText(this, "请输入IP:", 0).show();
                     return;
                 }
-                //roomServerStr = "192.168.114.4:18888";
+//                roomServerStr = "192.168.114.4:18888";
+                roomServerStr = "192.168.114.7:18888";
                 rtChatSdk.customRoomServerAddr(roomServerStr);
                 break;
             case R.id.btnJoinRoom:
@@ -238,7 +249,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                     Toast.makeText(this, "请输入房间号", 0).show();
                     return;
                 } else {
-                    retCode = rtChatSdk.requestJoinPlatformRoom(etRoomId.getText().toString().trim(), kVoiceOnly,6);
+                    retCode = rtChatSdk.requestJoinPlatformRoom(etRoomId.getText().toString().trim(), kVoiceOnly, 6);
                     Toast.makeText(this, "进入房间返回的值：retCode:" + retCode, 0).show();
                 }
                 break;
@@ -352,7 +363,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
         super.onBackPressed();
     }

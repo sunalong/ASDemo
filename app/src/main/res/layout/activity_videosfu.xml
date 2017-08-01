@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:text="用户名:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_userName"/>
+
+            <TextView
+                android:text="房间号:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_roomId"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="400dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/remoteContainer"
+                android:layout_width="match_parent"
+                android:layout_height="400dp">
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:id="@+id/videoinitbutton"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+
+                <LinearLayout
+                    android:id="@+id/buttons_videocall_container"
+                    android:orientation="vertical"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_marginBottom="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:text="添加用户"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Button1"
+                        android:onClick="jumpOnClick1"/>
+                    <Button
+                        android:text="删除用户"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/Button1"
+                        android:id="@+id/Button2"
+                        android:onClick="jumpOnClick1"/>
+
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/audio_list_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
+
+                    <LinearLayout
+                        android:id="@+id/buttons_audiocall_container"
+                        android:orientation="horizontal"
+                        android:layout_alignWithParentIfMissing="true"
+                        android:layout_marginBottom="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageButton
+                            android:id="@+id/button_call_toggle_speak"
+                            android:background="@mipmap/ic_lock_ringer_on_alpha"
+                            android:contentDescription="@string/toggle_speak"
+                            android:layout_width="48dp"
+                            android:layout_height="match_parent"
+                            android:gravity = "center_vertical|center_horizontal"/>
+
+                        <ImageButton
+                            android:id="@+id/button_call_toggle_mic"
+                            android:background="@android:drawable/ic_btn_speak_now"
+                            android:contentDescription="@string/toggle_mic"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:gravity = "center_vertical|center_horizontal"/>
+
+                        <ImageButton
+                            android:id="@+id/button_call_disconnect"
+                            android:background="@mipmap/disconnect"
+                            android:contentDescription="@string/disconnect_call"
+                            android:gravity = "center_vertical|center_horizontal"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

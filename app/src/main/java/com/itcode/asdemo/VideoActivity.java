@@ -3,14 +3,12 @@ package com.itcode.asdemo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.Button;
 
@@ -38,6 +36,7 @@ public class VideoActivity extends Activity {
 
     private Button button1;
     private Button button2;
+    private int switchSytle = 0;
 
     private SurfaceViewContainer glLocalSurfaceViewContainer;
     private SurfaceViewContainer glRemoteSurfaceViewContainer;
@@ -52,16 +51,15 @@ public class VideoActivity extends Activity {
     private NativeVideoEngine mNVEngine;
 
     private boolean isBeautify;
-    private SeekBar sbVoiceChange;
+    private boolean isMCUMode = true;
 
-    enum enVideoSource {
+    enum enVideoSource
+    {
         kVideoSourceNull,
         kVideoSourceFrontCamera,
         kVideoSourceBackCamera,
         kVideoSourceScreen
-    }
-
-    ;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,20 +84,20 @@ public class VideoActivity extends Activity {
         localSurfaceViewContainer.addView(glLocalSurfaceViewContainer);
         remoteSurfaceViewContainer.addView(glRemoteSurfaceViewContainer);
 
-        sendLocalVideoCheckBox = (CheckBox) findViewById(R.id.checkBox1);
-        displayLocalViewCheckBox = (CheckBox) findViewById(R.id.checkBox2);
-        cameraSwitchCheckBox = (CheckBox) findViewById(R.id.checkBox3);
+        sendLocalVideoCheckBox = (CheckBox)findViewById(R.id.checkBox1);
+        displayLocalViewCheckBox = (CheckBox)findViewById(R.id.checkBox2);
+        cameraSwitchCheckBox = (CheckBox)findViewById(R.id.checkBox3);
 
-        openRemoteVideoCheckBox = (CheckBox) findViewById(R.id.checkBox10);
-        displayRemoteViewCheckBox = (CheckBox) findViewById(R.id.checkBox11);
-        viewSomeOneCheckBox = (CheckBox) findViewById(R.id.checkBox12);
+        openRemoteVideoCheckBox = (CheckBox)findViewById(R.id.checkBox10);
+        displayRemoteViewCheckBox = (CheckBox)findViewById(R.id.checkBox11);
+        viewSomeOneCheckBox = (CheckBox)findViewById(R.id.checkBox12);
 
-        disconnectButton = (ImageButton) findViewById(R.id.button_call_disconnect);
-        toggleMuteButton = (ImageButton) findViewById(R.id.button_call_toggle_mic);
-        toggleSpeakerButton = (ImageButton) findViewById(R.id.button_call_toggle_speak);
+        disconnectButton = (ImageButton)findViewById(R.id.button_call_disconnect);
+        toggleMuteButton = (ImageButton)findViewById(R.id.button_call_toggle_mic);
+        toggleSpeakerButton = (ImageButton)findViewById(R.id.button_call_toggle_speak);
 
-        button1 = (Button) findViewById(R.id.Button1);
-        button2 = (Button) findViewById(R.id.Button2);
+        button1 = (Button)findViewById(R.id.Button1);
+        button2 = (Button)findViewById(R.id.Button2);
 
         //init voice mic and speaker status
         NativeVoiceEngine.getInstance().setLouderSpeaker(blouderspeak);
@@ -129,26 +127,25 @@ public class VideoActivity extends Activity {
         disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
                 mNVEngine.destroyRenderView(glLocalSurfaceViewContainer.getSurfaceView());
                 mNVEngine.destroyRenderView(glRemoteSurfaceViewContainer.getSurfaceView());
-
-                NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
                 finish();
-                ConnectAVActivity.reconnectListener.reconnectListener(true);
             }
         });
 
         sendLocalVideoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (NATIVETEST)
+                if(isChecked){
+                    if(NATIVETEST)
                         mNVEngine.startSendVideo();
                     else
                         mVideoEngineImp.startSendVideo();
                     Toast.makeText(VideoActivity.this, "发送本地视频", Toast.LENGTH_LONG).show();
-                } else {
-                    if (NATIVETEST)
+                }
+                else {
+                    if(NATIVETEST)
                         mNVEngine.stopSendVideo();
                     else
                         mVideoEngineImp.stopSendLocalVideo();
@@ -160,26 +157,27 @@ public class VideoActivity extends Activity {
         displayLocalViewCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (NATIVETEST)
-                    mNVEngine.observerLocalVideoWindow(isChecked, glLocalSurfaceViewContainer.getSurfaceView());
+                if(NATIVETEST)
+                    mNVEngine.observerLocalVideoWindow(isChecked,glLocalSurfaceViewContainer.getSurfaceView());
                 else
-                    mVideoEngineImp.observerLocalVideo(isChecked, glLocalSurfaceViewContainer.getSurfaceView());
+                    mVideoEngineImp.observerLocalVideo(isChecked,glLocalSurfaceViewContainer.getSurfaceView());
                 SurfaceView mLocalSurfaceView = glLocalSurfaceViewContainer.getSurfaceView();
-                if (mLocalSurfaceView != null)
-                    mLocalSurfaceView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
+                if(mLocalSurfaceView!=null)
+                    mLocalSurfaceView.setVisibility(isChecked?View.VISIBLE:View.INVISIBLE);
             }
         });
 
         cameraSwitchCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (NATIVETEST)
+                if(isChecked) {
+                    if(NATIVETEST)
                         mNVEngine.switchCamera(enVideoSource.kVideoSourceBackCamera.ordinal()); //back
                     else
                         mVideoEngineImp.switchCamera(false);
-                } else {
-                    if (NATIVETEST)
+                }
+                else {
+                    if(NATIVETEST)
                         mNVEngine.switchCamera(enVideoSource.kVideoSourceFrontCamera.ordinal()); //front
                     else
                         mVideoEngineImp.switchCamera(true);
@@ -191,23 +189,20 @@ public class VideoActivity extends Activity {
         openRemoteVideoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (NATIVETEST)
-                        mNVEngine.startObserverRemoteVideo(glRemoteSurfaceViewContainer.getSurfaceView());
-                    else
-                        mVideoEngineImp.startObserverRemoteVideo(glRemoteSurfaceViewContainer.getSurfaceView());
+                if(isChecked) {
+                    mNVEngine.observerRemoteTargetVideo("", glRemoteSurfaceViewContainer.getSurfaceView());
                     Toast.makeText(VideoActivity.this, "打开接受远端视频", Toast.LENGTH_LONG).show();
-                } else {
-                    if (NATIVETEST)
-                        mNVEngine.stopObserverRemoteVideo();
-                    else
-                        mVideoEngineImp.stopObserverRemoteVideo();
-
+                }
+                else {
+                    if(isMCUMode == false) {
+                        mNVEngine.observerRemoteTargetVideo(username, null);
+                    }
+                    mNVEngine.observerRemoteTargetVideo("", null);
                     Toast.makeText(VideoActivity.this, "关闭接受远端视频", Toast.LENGTH_LONG).show();
                 }
                 SurfaceView mRemoteSurfaceView = glRemoteSurfaceViewContainer.getSurfaceView();
-                if (mRemoteSurfaceView != null)
-                    mRemoteSurfaceView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
+                if(mRemoteSurfaceView!=null)
+                    mRemoteSurfaceView.setVisibility(isChecked?View.VISIBLE:View.INVISIBLE);
             }
         });
 
@@ -222,39 +217,19 @@ public class VideoActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String msg;
-                if (isChecked) {
+                if(isChecked) {
+                    isMCUMode = false;
                     msg = "切换到单人模式观看";
-                    if (NATIVETEST)
-                        mNVEngine.observerSomeOneVideo(username);
-                    else
-                        mVideoEngineImp.SwitchSomeOneView(username);
-                } else {
+                    mNVEngine.observerRemoteTargetVideo("", null);
+                    mNVEngine.observerRemoteTargetVideo(username, glRemoteSurfaceViewContainer.getSurfaceView());
+                }
+                else {
+                    isMCUMode = true;
                     msg = "切换到多人模式观看";
-                    if (NATIVETEST)
-                        mNVEngine.observerSomeOneVideo("");
-                    else
-                        mVideoEngineImp.SwitchSomeOneView("");
+                    mNVEngine.observerRemoteTargetVideo(username, null);
+                    mNVEngine.observerRemoteTargetVideo("", glRemoteSurfaceViewContainer.getSurfaceView());
                 }
                 Toast.makeText(VideoActivity.this, msg, Toast.LENGTH_LONG).show();
-            }
-        });
-        sbVoiceChange = (SeekBar) findViewById(R.id.sbVoiceChange);
-        sbVoiceChange.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                int result = (int) (0.2 * i - 10);
-                Log.i("SeekBarFuck", i + "  b:" + b + " result:" + result);
-                int setVoiceChangeParm = NativeVoiceEngine.getInstance().setVoiceChangeParm(result);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
     }
@@ -265,41 +240,20 @@ public class VideoActivity extends Activity {
     }
 
     @Override
-    protected void onRestart() {
-        Log.i("Test", "onRestart()");
-        super.onRestart();
-    }
-
-    @Override
-    protected void onStart() {
-        Log.i("Test", "onStart()");
-        super.onStart();
-    }
-
-    @Override
     protected void onDestroy() {
         finish();
-        ConnectAVActivity.reconnectListener.reconnectListener(true);
-        Log.i("Test", "onDestroy()");
         super.onDestroy();
     }
 
     @Override
-    protected void onPause() {
-        Log.i("Test", "onPause()");
-        super.onPause();
-    }
-
-    @Override
-    public void onBackPressed() {
+    public void onBackPressed(){
+        NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
         mNVEngine.destroyRenderView(glLocalSurfaceViewContainer.getSurfaceView());
         mNVEngine.destroyRenderView(glRemoteSurfaceViewContainer.getSurfaceView());
-        NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
-        ConnectAVActivity.reconnectListener.reconnectListener(true);
         super.onBackPressed();
     }
 
-    private void updateCheckBoxStatus(boolean status) {
+    private void updateCheckBoxStatus(boolean status){
         sendLocalVideoCheckBox.setChecked(false);
         displayLocalViewCheckBox.setChecked(status);
         cameraSwitchCheckBox.setChecked(false);
@@ -309,8 +263,8 @@ public class VideoActivity extends Activity {
         viewSomeOneCheckBox.setChecked(false);
     }
 
-    public void jumpOnClick1(View view) {
-        switch (view.getId()) {
+    public void jumpOnClick1(View view){
+        switch (view.getId()){
             case R.id.Button1: {
                 //updateCheckBoxStatus(true);
                 // mNativeVideoEngine.setInitView();
@@ -332,10 +286,12 @@ public class VideoActivity extends Activity {
                 //mNVEngine.destroyRenderView(glRemoteSurfaceViewContainer.getSurfaceView());
                 isBeautify = !isBeautify;
                 mNVEngine.enableBeautify(isBeautify);
-                if (isBeautify) {
+                if(isBeautify){
                     button2.setText("关闭美颜");
                     Toast.makeText(this, "打开美颜", Toast.LENGTH_LONG).show();
-                } else {
+                }
+                else
+                {
                     button2.setText("打开美颜");
                     Toast.makeText(this, "关闭美颜", Toast.LENGTH_LONG).show();
                 }
@@ -343,12 +299,14 @@ public class VideoActivity extends Activity {
                 break;
             }
 
-            /*case R.id.button: {
-                //mNativeVideoEngine.openRemoteVideo(true);
-                break;
-            }
+//            case R.id.Button3: {
+//                mNVEngine.switchRemoteVideoShowStyle(switchSytle%6+1);
+//                //mNVEngine.switchUserShowPostionIndex("[\"\",\"\",\"123\",\"456\"]");
+//                switchSytle = switchSytle + 1;
+//                break;
+//            }
 
-            case R.id.button3: {
+            /*case R.id.button3: {
                 //mNativeVideoEngine.sendLocalVideo(true);
                 break;
             }
