@@ -8,18 +8,8 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
-
-    <Button
-        android:text="IM测试"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/avbutton"
-        android:layout_marginTop="90dp"
-        android:id="@+id/imbutton"
-        android:layout_alignStart="@+id/avbutton"
-        android:layout_alignEnd="@+id/avbutton"
-        android:onClick="jumpOnClick"/>
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.ztgametest.EnterActivity">
 
     <Button
         android:text="音视频测试"
@@ -30,4 +20,25 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:onClick="jumpOnClick"/>
+
+    <Button
+        android:text="语音测试"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:id="@+id/abutton"
+        android:onClick="jumpOnClick"
+        android:layout_below="@+id/avbutton"
+        android:layout_alignStart="@+id/imbutton"/>
+
+    <Button
+        android:text="IM测试"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:id="@+id/imbutton"
+        android:onClick="jumpOnClick"
+        android:layout_below="@+id/abutton"
+        android:layout_alignStart="@+id/avbutton"/>
+
 </RelativeLayout>

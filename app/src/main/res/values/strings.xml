@@ -36,6 +36,8 @@
     <string name="toggle_debug">Toggle debug view</string>
     <string name="ok">OK</string>
 
+    <string name="room_description">请输入房间名字：</string>
+
     <string name="connect_description">Connect to the room</string>
     <string name="settings_name" translatable="false">RTChatSDKDEMO Settings</string>
 
@@ -205,10 +207,10 @@
     <string name="pref_max_retransmits_dlg">Enter max attempts to retransmit.</string>
     <string name="pref_max_retransmits_default" translatable="false">-1</string>
 
-    <string name="pref_data_id_key">data_id_preference</string>
-    <string name="pref_data_id_title">Data id.</string>
-    <string name="pref_data_id_dlg">Enter data channel id.</string>
-    <string name="pref_data_id_default" translatable="false">-1</string>
+    <string name="pref_live_server_url_key">live_server_preference</string>
+    <string name="pref_live_server_url_title">直播服务器URL.</string>
+    <string name="pref_live_server_url_dlg">Enter data channel id.</string>
+    <string name="pref_live_server_url_default" translatable="false">192.168.114.6:8000</string>
 
     <string name="pref_miscsettings_key">misc_settings_key</string>
     <string name="pref_miscsettings_title">Miscellaneous settings.</string>
@@ -216,7 +218,7 @@
     <string name="pref_room_server_url_key">platform_server_url_preference</string>
     <string name="pref_room_server_url_title">平台服务器URL.</string>
     <string name="pref_room_server_url_dlg">输入平台服务器URL.</string>
-    <string name="pref_room_server_url_default" translatable="false">192.168.114.7:18888</string>
+    <string name="pref_room_server_url_default" translatable="false">192.168.114.4:18888</string>
 
     <string name="pref_displayhud_key">displayhud_preference</string>
     <string name="pref_displayhud_title">Display call statistics.</string>
