@@ -105,6 +105,7 @@ public class ConnectAVActivity extends Activity {
     private String platformUrl = "";
     private String liveServerUrl = "";
     private int activityStatus = 0;
+    private boolean isLunched = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,7 +134,7 @@ public class ConnectAVActivity extends Activity {
                     case 7://进入房间
                     {
                         String msg = "用户进入房间失败 ------";
-                        if (error == 1) {
+                        if (error == 1 && !isLunched) {
                             msg = "用户进入房间成功 ------";
                             switch (activityStatus) {
                                 case 0: {
@@ -272,10 +273,12 @@ public class ConnectAVActivity extends Activity {
         super.onResume();
         String room = sharedPref.getString(keyprefRoom, "");
         roomEditText.setText(room);
+        isLunched = false;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        isLunched = false;
         if (requestCode == CONNECTION_REQUEST) {
             Log.d(TAG, "Return: " + resultCode);
             setResult(resultCode);
@@ -338,12 +341,12 @@ public class ConnectAVActivity extends Activity {
 
     private void connectToRoom(String roomId, int mediaType) {
 
-        platformUrl = sharedPrefGetString(R.string.pref_room_server_url_key,
-                "platformIp", R.string.pref_room_server_url_default, false);
-
-        liveServerUrl = sharedPrefGetString(R.string.pref_live_server_url_key, "liveServerIp", R.string.pref_room_server_url_default, false);
-
-        rtChatSdk.setSdkParams("{\"LiveServerAddr\":\""+liveServerUrl + "\",\"RoomServerAddr\":\""  +  platformUrl + "\"}");
+//        platformUrl = sharedPrefGetString(R.string.pref_room_server_url_key,
+//                "platformIp", R.string.pref_room_server_url_default, false);
+//
+//        liveServerUrl = sharedPrefGetString(R.string.pref_live_server_url_key, "liveServerIp", R.string.pref_room_server_url_default, false);
+//
+//        rtChatSdk.setSdkParams("{\"LiveServerAddr\":\""+liveServerUrl + "\",\"RoomServerAddr\":\""  +  platformUrl + "\"}");
         int retCode;
         if (roomId == null) {
             Toast.makeText(this, "请输入房间号", Toast.LENGTH_SHORT).show();
@@ -358,6 +361,7 @@ public class ConnectAVActivity extends Activity {
     private void lauchTestVideoActiviy(){
         Intent intent = new Intent(this, VideoActivity.class);
         intent.putExtra("username", ObserverUserName);
+        isLunched = true;
         startActivityForResult(intent, CONNECTION_REQUEST);
     }
 
@@ -365,6 +369,7 @@ public class ConnectAVActivity extends Activity {
         Intent intent = new Intent(this, VideoLiveBCActivity.class);
         intent.putExtra("username", this.userName);
         intent.putExtra("roomId", this.roomId);
+        isLunched = true;
         startActivityForResult(intent, CONNECTION_REQUEST);
     }
 
@@ -372,6 +377,7 @@ public class ConnectAVActivity extends Activity {
         Intent intent = new Intent(this, VideoSFUActivity.class);
         intent.putExtra("username", this.userName);
         intent.putExtra("roomId", this.roomId);
+        isLunched = true;
         startActivityForResult(intent, CONNECTION_REQUEST);
     }
 

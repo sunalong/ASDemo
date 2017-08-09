@@ -157,5 +157,26 @@
                 android:layout_weight="1"
                 android:text="10.停止播放音乐" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnEnableMusicMode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="11.打开音乐模式" />
+
+            <Button
+                android:id="@+id/btnDisableMusicMode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:text="12.关闭音乐模式" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

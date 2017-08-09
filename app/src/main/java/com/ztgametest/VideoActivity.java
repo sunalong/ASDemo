@@ -51,7 +51,7 @@ public class VideoActivity extends Activity {
     private NativeVideoEngine mNVEngine;
 
     private boolean isBeautify;
-    private boolean isMCUMode = true;
+    private boolean enableRomoteView = true;
 
     enum enVideoSource
     {
@@ -105,6 +105,11 @@ public class VideoActivity extends Activity {
 
         NativeVoiceEngine.getInstance().setSendVoice(bunmute);
         toggleMuteButton.setAlpha(bunmute ? 1.0f : 0.3f);
+
+        SurfaceView mRemoteSurfaceView = glRemoteSurfaceViewContainer.getSurfaceView();
+        if(mRemoteSurfaceView!=null)
+            mRemoteSurfaceView.setVisibility(View.INVISIBLE);
+        viewSomeOneCheckBox.setVisibility(View.INVISIBLE);
 
         toggleMuteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,19 +195,21 @@ public class VideoActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
+                    enableRomoteView = true;
                     mNVEngine.observerRemoteTargetVideo("", glRemoteSurfaceViewContainer.getSurfaceView());
                     Toast.makeText(VideoActivity.this, "打开接受远端视频", Toast.LENGTH_LONG).show();
                 }
                 else {
-                    if(isMCUMode == false) {
-                        mNVEngine.observerRemoteTargetVideo(username, null);
-                    }
+                    enableRomoteView = false;
+                    viewSomeOneCheckBox.setChecked(false);
                     mNVEngine.observerRemoteTargetVideo("", null);
                     Toast.makeText(VideoActivity.this, "关闭接受远端视频", Toast.LENGTH_LONG).show();
                 }
                 SurfaceView mRemoteSurfaceView = glRemoteSurfaceViewContainer.getSurfaceView();
                 if(mRemoteSurfaceView!=null)
                     mRemoteSurfaceView.setVisibility(isChecked?View.VISIBLE:View.INVISIBLE);
+
+                viewSomeOneCheckBox.setVisibility(isChecked?View.VISIBLE:View.INVISIBLE);
             }
         });
 
@@ -218,16 +225,15 @@ public class VideoActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String msg;
                 if(isChecked) {
-                    isMCUMode = false;
                     msg = "切换到单人模式观看";
                     mNVEngine.observerRemoteTargetVideo("", null);
                     mNVEngine.observerRemoteTargetVideo(username, glRemoteSurfaceViewContainer.getSurfaceView());
                 }
                 else {
-                    isMCUMode = true;
                     msg = "切换到多人模式观看";
                     mNVEngine.observerRemoteTargetVideo(username, null);
-                    mNVEngine.observerRemoteTargetVideo("", glRemoteSurfaceViewContainer.getSurfaceView());
+                    if(enableRomoteView)
+                        mNVEngine.observerRemoteTargetVideo("", glRemoteSurfaceViewContainer.getSurfaceView());
                 }
                 Toast.makeText(VideoActivity.this, msg, Toast.LENGTH_LONG).show();
             }

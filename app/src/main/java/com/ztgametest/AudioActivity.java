@@ -1,6 +1,8 @@
 package com.ztgametest;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import com.ztgame.voiceengine.NativeVoiceEngine;
 import com.ztgame.voiceengine.RTChatSDKVoiceListener;
 import com.ztgame.voiceengine.ReceiveDataFromC;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.Random;
 
@@ -35,6 +38,8 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     private Button btnPlayMusic;
     private Button btnStopMusic;
 
+    private Button btnOpenMusicMode;
+
     private EditText etRoomServer;
     private EditText etRoomId;
     private EditText etUserName;
@@ -46,6 +51,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     private final String TAG = "AudioActivity";
 
     private final int kVoiceOnly = 1;
+    private final int kVoiceHigh = 0xa0;
     private final boolean isInnerNet = true;
 
     private String mAppKey;
@@ -65,6 +71,8 @@ public class AudioActivity extends Activity implements View.OnClickListener {
 
     private MediaPlayer mediaPlayer;
 
+    private Context mContext;
+
     private String mResourcePath = Environment.getExternalStorageDirectory().
             getAbsolutePath();
 
@@ -74,6 +82,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         rtChatSdk = NativeVoiceEngine.getInstance();
         rtChatSdk.register(this);
         rtChatSdk.setDebugLogEnabled(true);
+        mContext = this;
         receiveDataFromC = new ReceiveDataFromC();
         receiveDataFromC.setRtChatSDKVoiceListener(new RTChatSDKVoiceListener() {
             @Override
@@ -140,6 +149,8 @@ public class AudioActivity extends Activity implements View.OnClickListener {
 
         btnPlayMusic = (Button) findViewById(R.id.btnPlayMusic);
         btnStopMusic = (Button) findViewById(R.id.btnStopMusic);
+
+        btnOpenMusicMode = (Button) findViewById(R.id.btnEnableMusicMode);
     }
 
     @Override
@@ -159,12 +170,14 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         btnVoiceMute.setOnClickListener(this);
         btnPlayMusic.setOnClickListener(this);
         btnStopMusic.setOnClickListener(this);
+        btnOpenMusicMode.setOnClickListener(this);
     }
 
-    float volumeValue = 5;
+    float volumeValue = 0;
+    int reverbLevel = 0;
     boolean mute = true;
 
-    public MediaPlayer createLocalMp3(String file){
+    public MediaPlayer createLocalMp3(FileDescriptor file){
         MediaPlayer  mp=new MediaPlayer();
         try{
             mp.setDataSource(file);
@@ -177,8 +190,15 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     private void playMusic(){
         boolean createState=false;
         if(mediaPlayer==null){
-            mediaPlayer=createLocalMp3(mResourcePath+"/test/1.mp3");
-            createState=true;
+            try {
+                AssetFileDescriptor afd = this.getAssets().openFd("1.mp3");
+                mediaPlayer =new MediaPlayer();
+                mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                createState=true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
         mediaPlayer.setOnCompletionListener(new OnCompletionListener(){
@@ -187,7 +207,8 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 try {
                     try {
                         mediaPlayer.reset();
-                        mediaPlayer.setDataSource(mResourcePath+"/test/1.mp3");
+                        AssetFileDescriptor afd = mContext.getAssets().openFd("1.mp3");
+                        mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                         mediaPlayer.prepare();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -288,12 +309,15 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 Toast.makeText(this, volumeValue + "减声音：retCode:" + retCode, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btnPlayMusic:
-                rtChatSdk.startPlayFileAsMic(mResourcePath+"/test/music.wav");
-                //playMusic();
+                //rtChatSdk.startPlayFileAsMic(mResourcePath+"/test/music.wav");
+                playMusic();
                 break;
             case R.id.btnStopMusic:
-                rtChatSdk.stopPlayFileAsMic();
-                //stopMusic();
+                //rtChatSdk.stopPlayFileAsMic();
+                stopMusic();
+                break;
+            case R.id.btnEnableMusicMode:
+                rtChatSdk.setSdkParams("{\"EnableMusicMode\":"+true + "}");
                 break;
         }
     }
