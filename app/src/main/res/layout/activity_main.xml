@@ -21,16 +21,33 @@
             android:layout_height="wrap_content"
             android:text="获取本手机型号的 Audio Setting"
             android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etUserName"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:hint="用户名：" />
+
+            <EditText
+                android:id="@+id/etUserKey"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:hint="用户Key：" />
+        </LinearLayout>
+
         <Button
             android:id="@+id/btnInitSdk"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="1.初始化sdk" />
-        <Button
-            android:id="@+id/btnSetUserInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="设置用户信息" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,7 +60,7 @@
                 android:layout_weight="1"
                 android:textSize="11sp"
                 android:hint="请输入房间ebtlIP："
-                android:text="192.168.114.4:18888" />
+                android:text="192.168.114.7:18888" />
                 #android:text="115.159.251.79:8081" />
                 #android:text="115.159.252.235:7002" />
 
@@ -65,7 +82,7 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:hint="请输入房间号："
-                android:text="2" />
+                android:text="11" />
 
             <Button
                 android:id="@+id/btnJoinRoom"
@@ -132,6 +149,26 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="7.减音量" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSetParams"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="设置参数" />
+
+            <Button
+                android:id="@+id/btnCallback"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="回调" />
         </LinearLayout>
 
         <LinearLayout

@@ -52,7 +52,7 @@ public class VideoLiveBCActivity extends Activity {
 
         disconnectButton = (ImageButton)findViewById(R.id.button_call_disconnect);
 
-        mSurfaceView = mNVEngine.createRenderView();
+        mSurfaceView = mNVEngine.createRenderView(1);
 
         disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +80,7 @@ public class VideoLiveBCActivity extends Activity {
     private void Init(){
         RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         remoteRelLayout.addView(mSurfaceView, param);
-        int ret = mNVEngine.startObserverRemoteVideo(mSurfaceView);
+        int ret = mNVEngine.observerRemoteTargetVideo("", mSurfaceView);
     }
 
     @Override

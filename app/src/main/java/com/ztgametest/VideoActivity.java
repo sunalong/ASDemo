@@ -36,7 +36,9 @@ public class VideoActivity extends Activity {
 
     private Button button1;
     private Button button2;
+    private Button button3;
     private int switchSytle = 0;
+    private boolean isRecording = false;
 
     private SurfaceViewContainer glLocalSurfaceViewContainer;
     private SurfaceViewContainer glRemoteSurfaceViewContainer;
@@ -84,8 +86,8 @@ public class VideoActivity extends Activity {
         localSurfaceViewContainer.addView(glLocalSurfaceViewContainer);
         remoteSurfaceViewContainer.addView(glRemoteSurfaceViewContainer);
 
-        sendLocalVideoCheckBox = (CheckBox)findViewById(R.id.checkBox1);
-        displayLocalViewCheckBox = (CheckBox)findViewById(R.id.checkBox2);
+        displayLocalViewCheckBox = (CheckBox)findViewById(R.id.checkBox1);
+        sendLocalVideoCheckBox = (CheckBox)findViewById(R.id.checkBox2);
         cameraSwitchCheckBox = (CheckBox)findViewById(R.id.checkBox3);
 
         openRemoteVideoCheckBox = (CheckBox)findViewById(R.id.checkBox10);
@@ -98,6 +100,7 @@ public class VideoActivity extends Activity {
 
         button1 = (Button)findViewById(R.id.Button1);
         button2 = (Button)findViewById(R.id.Button2);
+        button3 = (Button)findViewById(R.id.Button3);
 
         //init voice mic and speaker status
         NativeVoiceEngine.getInstance().setLouderSpeaker(blouderspeak);
@@ -162,13 +165,12 @@ public class VideoActivity extends Activity {
         displayLocalViewCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(NATIVETEST)
-                    mNVEngine.observerLocalVideoWindow(isChecked,glLocalSurfaceViewContainer.getSurfaceView());
-                else
-                    mVideoEngineImp.observerLocalVideo(isChecked,glLocalSurfaceViewContainer.getSurfaceView());
+                mNVEngine.observerLocalVideoWindow(isChecked,glLocalSurfaceViewContainer.getSurfaceView());
                 SurfaceView mLocalSurfaceView = glLocalSurfaceViewContainer.getSurfaceView();
                 if(mLocalSurfaceView!=null)
                     mLocalSurfaceView.setVisibility(isChecked?View.VISIBLE:View.INVISIBLE);
+                if(isChecked == false)
+                    sendLocalVideoCheckBox.setChecked(isChecked);
             }
         });
 
@@ -306,9 +308,18 @@ public class VideoActivity extends Activity {
             }
 
             case R.id.Button3: {
-                mNVEngine.switchRemoteVideoShowStyle(switchSytle%6+1);
-                //mNVEngine.switchUserShowPostionIndex("[\"\",\"\",\"123\",\"456\"]");
-                switchSytle = switchSytle + 1;
+                //mNVEngine.switchRemoteVideoShowStyle(switchSytle%6+1);
+                //switchSytle = switchSytle + 1;
+                isRecording = ! isRecording;
+                if(isRecording) {
+                    button3.setText("关闭录制");
+                    NativeVoiceEngine.getInstance().startRecordConference("test", true);
+                }
+                else{
+                    button3.setText("打开录制");
+                    NativeVoiceEngine.getInstance().stopRecordConference();
+                }
+
                 break;
             }
 

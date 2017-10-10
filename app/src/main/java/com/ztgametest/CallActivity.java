@@ -130,8 +130,8 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
     //localRender.init(rootEglBase.getEglBaseContext(), null);
     //remoteRenderScreen.init(rootEglBase.getEglBaseContext(), null);
 
-    localRender =(SurfaceViewRenderer)mNVEngine.createRenderView();
-    remoteRenderScreen = (SurfaceViewRenderer)mNVEngine.createRenderView();
+    localRender =(SurfaceViewRenderer)mNVEngine.createRenderView(0);
+    remoteRenderScreen = (SurfaceViewRenderer)mNVEngine.createRenderView(0);
 
 
 
@@ -272,12 +272,12 @@ public class CallActivity extends Activity implements RTChatVideoClient.RTChatVi
     @Override
     public void onDisplayRemoteView(boolean isChecked) {
         if(isChecked) {
-            mNVEngine.startObserverRemoteVideo(remoteRenderScreen);
+            //mNVEngine.startObserverRemoteVideo(remoteRenderScreen);
             Toast.makeText(this, "显示远端视频", Toast.LENGTH_LONG).show();
             updateVideoView();
         }
         else {
-            mNVEngine.stopObserverRemoteVideo();
+            //mNVEngine.stopObserverRemoteVideo();
             Toast.makeText(this, "关闭远端视频", Toast.LENGTH_LONG).show();
             updateVideoView1();
         }

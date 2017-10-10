@@ -11,9 +11,9 @@
             android:defaultValue="@string/pref_videocall_default" />
 
         <CheckBoxPreference
-            android:key="@string/pref_screencapture_key"
-            android:title="@string/pref_screencapture_title"
-            android:defaultValue="@string/pref_screencapture_default" />
+            android:key="@string/pref_cdntest_key"
+            android:title="@string/pref_cdntest_title"
+            android:defaultValue="@string/pref_cdntest_default" />
 
         <CheckBoxPreference
             android:key="@string/pref_camera2_key"
@@ -195,11 +195,11 @@
             android:dialogTitle="@string/pref_username_dlg" />
 
         <EditTextPreference
-            android:key="@string/pref_max_retransmits_key"
-            android:title="@string/pref_max_retransmits_title"
-            android:inputType="number"
-            android:defaultValue="@string/pref_max_retransmits_default"
-            android:dialogTitle="@string/pref_max_retransmits_dlg" />
+            android:key="@string/pref_cheat_src_ip_key"
+            android:title="@string/pref_cheat_src_ip_title"
+            android:inputType="text"
+            android:defaultValue="@string/pref_cheat_src_ip_default"
+            android:dialogTitle="@string/pref_cheat_src_ip_dlg" />
 
         <EditTextPreference
             android:key="@string/pref_live_server_url_key"

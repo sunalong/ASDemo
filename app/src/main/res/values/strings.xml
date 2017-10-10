@@ -60,9 +60,9 @@
     <string name="pref_videocall_dlg">Enable video in a call.</string>
     <string name="pref_videocall_default">true</string>
 
-    <string name="pref_screencapture_key">screencapture_preference</string>
-    <string name="pref_screencapture_title">Use screencapture.</string>
-    <string name="pref_screencapture_default">false</string>
+    <string name="pref_cdntest_key">cdntest_preference</string>
+    <string name="pref_cdntest_title">Use CDN TEST.</string>
+    <string name="pref_cdntest_default">false</string>
 
     <string name="pref_camera2_key">camera2_preference</string>
     <string name="pref_camera2_title">Use Camera2.</string>
@@ -202,10 +202,10 @@
     <string name="pref_username_dlg">输入需要观看的用户名.</string>
     <string name="pref_username_default" translatable="false"></string>
 
-    <string name="pref_max_retransmits_key">max_retransmits_preference</string>
-    <string name="pref_max_retransmits_title">Max attempts to retransmit.</string>
-    <string name="pref_max_retransmits_dlg">Enter max attempts to retransmit.</string>
-    <string name="pref_max_retransmits_default" translatable="false">-1</string>
+    <string name="pref_cheat_src_ip_key">cheat_src_ip</string>
+    <string name="pref_cheat_src_ip_title">cheat src ip.</string>
+    <string name="pref_cheat_src_ip_dlg">Enter cheat src ip.</string>
+    <string name="pref_cheat_src_ip_default" translatable="false"></string>
 
     <string name="pref_live_server_url_key">live_server_preference</string>
     <string name="pref_live_server_url_title">直播服务器URL.</string>
@@ -229,5 +229,12 @@
     <string name="pref_tracing_title">Debug performance tracing.</string>
     <string name="pref_tracing_dlg">Debug performance tracing.</string>
     <string name="pref_tracing_default" translatable="false">false</string>
+
+
+    <string name="empty_directory">Empty Directory</string>
+    <string name="storage_removed">Storage was removed or unmounted.</string>
+    <string name="choose_file">Select a file</string>
+    <string name="error_selecting_file">Error selecting File</string>
+    <string name="internal_storage">Internal storage</string>
 
 </resources>

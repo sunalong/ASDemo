@@ -94,6 +94,8 @@ public class VideoSFUActivity extends Activity {
         NativeVoiceEngine.getInstance().setSendVoice(bunmute);
         toggleMuteButton.setAlpha(bunmute ? 1.0f : 0.3f);
 
+        NativeVoiceEngine.getInstance().enableAudioVolumeIndication(200);
+
         NativeVoiceEngine.getInstance().registerEventHandler(mListener);
 
         toggleMuteButton.setOnClickListener(new View.OnClickListener() {
@@ -185,7 +187,7 @@ public class VideoSFUActivity extends Activity {
     }
 
     private void addSurfaceView(String userId){
-        SurfaceView mSurfaceView = mNVEngine.createRenderView();
+        SurfaceView mSurfaceView = mNVEngine.createRenderView(1);
         int addCount = count;
         boolean removeIdFlag = false;
         if(removeId.isEmpty()) {
@@ -234,6 +236,7 @@ public class VideoSFUActivity extends Activity {
     }
 
     private void Init(){
+        mNVEngine.observerLocalVideoWindow(true,null);
         mNVEngine.startSendVideo();
         addSurfaceView(username);
     }

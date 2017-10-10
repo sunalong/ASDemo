@@ -17,6 +17,8 @@ public class EnterActivity extends Activity {
     private static final int CONNECTIONAV_REQUEST = 2;
     private static final int CONNECTIONA_REQUEST = 3;
 
+    private final boolean isInnerBuild = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,17 +29,19 @@ public class EnterActivity extends Activity {
         switch (view.getId()){
             case R.id.avbutton: {
                 intent = new Intent(this, ConnectAVActivity.class);
-
+                intent.putExtra("isReleaseBuild",isInnerBuild );
                 startActivityForResult(intent, CONNECTIONAV_REQUEST);
                 break;
             }
             case R.id.imbutton: {
                 intent = new Intent(this, MainActivity.class);
+                intent.putExtra("isReleaseBuild", isInnerBuild);
                 startActivityForResult(intent, CONNECTIONIM_REQUEST);
                 break;
             }
             case R.id.abutton:{
                 intent = new Intent(this, AudioActivity.class);
+                intent.putExtra("isReleaseBuild", isInnerBuild);
                 startActivityForResult(intent, CONNECTIONA_REQUEST);
                 break;
             }

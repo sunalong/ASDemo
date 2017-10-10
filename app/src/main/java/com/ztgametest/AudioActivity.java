@@ -2,6 +2,7 @@ package com.ztgametest;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -40,8 +41,11 @@ public class AudioActivity extends Activity implements View.OnClickListener {
 
     private Button btnOpenMusicMode;
 
+    private Button btnMuteVoice1;
+
     private EditText etRoomServer;
     private EditText etRoomId;
+    private EditText etUserID;
     private EditText etUserName;
     private EditText etUserKey;
 
@@ -52,7 +56,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
 
     private final int kVoiceOnly = 1;
     private final int kVoiceHigh = 0xa0;
-    private final boolean isInnerNet = true;
+    private boolean isInnerNet = false;
 
     private String mAppKey;
     private String mAppId;
@@ -79,6 +83,10 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final Intent intent = getIntent();
+        isInnerNet = intent.getBooleanExtra("isReleaseBuild", true);
+
         rtChatSdk = NativeVoiceEngine.getInstance();
         rtChatSdk.register(this);
         rtChatSdk.setDebugLogEnabled(true);
@@ -91,7 +99,17 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 switch (cmdType) {
                     case 1://初始化
                     {
-                        Toast.makeText(AudioActivity.this, "初始化完毕" + error, Toast.LENGTH_SHORT).show();
+                        String msg = "SDK初始化失败 ------";
+                        int ret = rtChatSdk.getSdkState();
+                        if (error == 1)
+                        {
+                            msg = "SDK初始化成功 ------";
+                        };
+                        if(error == 0 && ret > 0){
+                            msg = "SDK重复初始化 ------";
+                        }
+
+                        Toast.makeText(AudioActivity.this, msg + error, Toast.LENGTH_SHORT).show();
                     }
                     break;
                     case 7://进入房间
@@ -119,6 +137,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
             mAppId = outerAppId;
             mAppKey = outerAppKey;
             mPlatformUrl = outerPlatformServerUrl;
+            etRoomServer.setText(mPlatformUrl);
         }
     }
 
@@ -151,6 +170,10 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         btnStopMusic = (Button) findViewById(R.id.btnStopMusic);
 
         btnOpenMusicMode = (Button) findViewById(R.id.btnEnableMusicMode);
+
+        btnMuteVoice1 = (Button) findViewById(R.id.btnVoiceMute1);
+
+        etUserID = (EditText) findViewById(R.id.etUserID);
     }
 
     @Override
@@ -171,11 +194,12 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         btnPlayMusic.setOnClickListener(this);
         btnStopMusic.setOnClickListener(this);
         btnOpenMusicMode.setOnClickListener(this);
+        btnMuteVoice1.setOnClickListener(this);
     }
 
     float volumeValue = 0;
     int reverbLevel = 0;
-    boolean mute = true;
+    boolean mute = false;
 
     public MediaPlayer createLocalMp3(FileDescriptor file){
         MediaPlayer  mp=new MediaPlayer();
@@ -253,6 +277,8 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         String userKey;
         switch (v.getId()) {
             case R.id.btnInitSdk:
+                int ret = rtChatSdk.getSdkState();
+                Toast.makeText(this, "SDK状态：" + ret, Toast.LENGTH_SHORT).show();
                 rtChatSdk.initSDK(mAppId, mAppKey);
                 break;
             case R.id.btnJoinRoom:
@@ -266,8 +292,10 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 if(TextUtils.isEmpty(roomServerStr)){
                     roomServerStr = mPlatformUrl;
                 }
-                if(isInnerNet)
+                if(isInnerNet) {
                     rtChatSdk.customRoomServerAddr(roomServerStr);
+                    rtChatSdk.setSdkParams("{\"CDN_TEST\":\""+"true" + "\",\"RoomServerAddr\":\""  +  roomServerStr + "\"}");
+                }
 
                 if (TextUtils.isEmpty(etRoomId.getText())) {
                     Toast.makeText(this, "请输入房间号", Toast.LENGTH_SHORT).show();
@@ -290,12 +318,13 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 Toast.makeText(this, "关闭扬声器:" + retCode, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btnVoiceMute:
-                mute = !mute;
                 //设置静音与否
                 rtChatSdk.setSendVoice(mute);
+                mute = !mute;
                 break;
             case R.id.btnUpVolume:
                 volumeValue += 1;
+                reverbLevel += 1;
                 if (volumeValue >= 10)
                     volumeValue = 10;
                 retCode = rtChatSdk.adjustSpeakerVolume(volumeValue);
@@ -303,22 +332,28 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.btnDownVolume:
                 volumeValue -= 1;
+                reverbLevel -= 1;
                 if (volumeValue <= 0)
                     volumeValue = 0;
                 retCode = rtChatSdk.adjustSpeakerVolume(volumeValue);
                 Toast.makeText(this, volumeValue + "减声音：retCode:" + retCode, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btnPlayMusic:
-                //rtChatSdk.startPlayFileAsMic(mResourcePath+"/test/music.wav");
-                playMusic();
+                rtChatSdk.startPlayFileAsSource(mResourcePath+"/mkv/1.mkv", 3);
+                //rtChatSdk.enableAudioVolumeIndication(400);
+                //playMusic();
                 break;
             case R.id.btnStopMusic:
-                //rtChatSdk.stopPlayFileAsMic();
-                stopMusic();
+                rtChatSdk.stopPlayFileAsSource();
+                //rtChatSdk.enableAudioVolumeIndication(200);
+                //stopMusic();
                 break;
             case R.id.btnEnableMusicMode:
                 rtChatSdk.setSdkParams("{\"EnableMusicMode\":"+true + "}");
                 break;
+            case R.id.btnVoiceMute1:
+                mute = !mute;
+                rtChatSdk.muteAudioStream(etUserID.getText().toString().trim(), mute);
         }
     }
 

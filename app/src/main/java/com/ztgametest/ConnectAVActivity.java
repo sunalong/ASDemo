@@ -25,6 +25,8 @@ import com.ztgame.voiceengine.RTChatSDKVoiceListener;
 import com.ztgame.voiceengine.ReceiveDataFromC;
 
 import java.util.Random;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class ConnectAVActivity extends Activity {
@@ -40,20 +42,25 @@ public class ConnectAVActivity extends Activity {
     //外网key
     private static final String outerAppId = "3768c59536565afb";
     private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
-    private static final String outerPlatformServerUrl = "115.159.251.79:8080";
+    private static final String outerPlatformServerUrl = "room.audio.mztgame.com:8080";
+
 
     private final int kVoiceOnly = 1;
-    private final int kVideo_normalDefinition = 3;
-    private final int kVideo_highDefinition = 7;
-    private final int kVideo_veryHighDefinition = 11;
+    private final int kVideo_normalDefinition = 0;
+    private final int kVideo_highDefinition = 4;
+    private final int kVideo_veryHighDefinition = 8;
     private final int kLookLiveBC = 16;
+
+    private final int kConferenceNeedForward = 0x100;
+    private final int kMusicLowMark = 0x60;
+    private final int kVoiceAndVideo = 0x03;
 
 
     private ImageButton connectButton;
     private EditText roomEditText;
     private SharedPreferences sharedPref;
     private String keyprefVideoCallEnabled;
-    private String keyprefScreencapture;
+    private String keyprefCdntest;
     private String keyprefCamera2;
     private String keyprefResolution;
     private String keyprefFps;
@@ -82,10 +89,12 @@ public class ConnectAVActivity extends Activity {
     private String keyprefEnableDataChannel;
     private String keyprefOrdered;
 
-    private String keyprefMaxRetransmits;
+    private String keyprefCheatsSrcIp;
     private String keyprefDataProtocol;
     private String keyprefNegotiated;
     private String keyprefLiveServerUrl;
+
+    private boolean isInnerNet = false;
 
 
 
@@ -110,6 +119,10 @@ public class ConnectAVActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final Intent intent = getIntent();
+        isInnerNet = intent.getBooleanExtra("isReleaseBuild", true);
+
         rtChatSdk = NativeVoiceEngine.getInstance();
         rtChatSdk.register(this);
         rtChatSdk.setDebugLogEnabled(true);
@@ -117,18 +130,21 @@ public class ConnectAVActivity extends Activity {
         receiveDataFromC.setRtChatSDKVoiceListener(new RTChatSDKVoiceListener() {
             @Override
             public void rtchatsdkListener(int cmdType, final int error, String dataPtr, int dataSize) {
-                Log.i(TAG, dataPtr);
+                //Log.i(TAG, dataPtr);
                 switch (cmdType) {
                     case 1://初始化
                     {
                         String msg = "SDK初始化失败 ------";
+                        int ret = rtChatSdk.getSdkState();
                         if (error == 1)
                         {
-                            //hadInit = true;
                             msg = "SDK初始化成功 ------";
                         };
-                        Toast.makeText(ConnectAVActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, msg + error);
+                        if(error == 0 && ret > 0){
+                            msg = "SDK重复初始化 ------";
+                        }
+
+                        Toast.makeText(ConnectAVActivity.this, msg + error + dataPtr, Toast.LENGTH_SHORT).show();
                     }
                     break;
                     case 7://进入房间
@@ -149,12 +165,16 @@ public class ConnectAVActivity extends Activity {
                                     lauchLiveBCVideoActiviy();
                                     break;
                                 }
+                                case 3:{
+                                    lauchTestVideoPlayerActiviy();
+                                    break;
+                                }
                                 default:
                                     break;
                             }
 
                         }
-                        Toast.makeText(ConnectAVActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ConnectAVActivity.this, msg + dataPtr, Toast.LENGTH_SHORT).show();
                         Log.i(TAG, msg + error);
                     }
                     break;
@@ -166,7 +186,7 @@ public class ConnectAVActivity extends Activity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         keyprefVideoCallEnabled = getString(R.string.pref_videocall_key);
-        keyprefScreencapture = getString(R.string.pref_screencapture_key);
+        keyprefCdntest = getString(R.string.pref_cdntest_key);
         keyprefCamera2 = getString(R.string.pref_camera2_key);
         keyprefResolution = getString(R.string.pref_resolution_key);
         keyprefFps = getString(R.string.pref_fps_key);
@@ -194,7 +214,7 @@ public class ConnectAVActivity extends Activity {
         keyprefEnableDataChannel = getString(R.string.pref_enable_datachannel_key);
         keyprefOrdered = getString(R.string.pref_ordered_key);
 
-        keyprefMaxRetransmits = getString(R.string.pref_max_retransmits_key);
+        keyprefCheatsSrcIp = getString(R.string.pref_cheat_src_ip_key);
         keyprefDataProtocol = getString(R.string.pref_data_protocol_key);
         keyprefNegotiated = getString(R.string.pref_negotiated_key);
         keyprefLiveServerUrl = getString(R.string.pref_live_server_url_key);
@@ -214,8 +234,6 @@ public class ConnectAVActivity extends Activity {
 
         connectButton = (ImageButton) findViewById(R.id.connect_button);
         connectButton.setOnClickListener(connectListener);
-        //Init sdk
-        final Intent intent = getIntent();
 
         //default access inner network for testing
         appid = innerAppId;
@@ -341,12 +359,31 @@ public class ConnectAVActivity extends Activity {
 
     private void connectToRoom(String roomId, int mediaType) {
 
-//        platformUrl = sharedPrefGetString(R.string.pref_room_server_url_key,
-//                "platformIp", R.string.pref_room_server_url_default, false);
-//
-//        liveServerUrl = sharedPrefGetString(R.string.pref_live_server_url_key, "liveServerIp", R.string.pref_room_server_url_default, false);
-//
-//        rtChatSdk.setSdkParams("{\"LiveServerAddr\":\""+liveServerUrl + "\",\"RoomServerAddr\":\""  +  platformUrl + "\"}");
+        platformUrl = sharedPrefGetString(R.string.pref_room_server_url_key,
+                "platformIp", R.string.pref_room_server_url_default, false);
+
+        liveServerUrl = sharedPrefGetString(R.string.pref_live_server_url_key, "liveServerIp", R.string.pref_room_server_url_default, false);
+
+        // Use screencapture option.
+        boolean cdntest = sharedPrefGetBoolean(R.string.pref_cdntest_key,
+                "cdntest", R.string.pref_cdntest_default, false);
+
+        String cheatSrcIp = sharedPrefGetString(R.string.pref_cheat_src_ip_key, "liveServerIp", R.string.pref_cheat_src_ip_default, false);
+
+        if(isInnerNet) {
+            JSONObject packet = new JSONObject();
+            try {
+                packet.put("LiveServerAddr", liveServerUrl);
+                packet.put("RoomServerAddr", platformUrl);
+                packet.put("CDN_TEST", cdntest);
+                packet.put("CheatingIP", cheatSrcIp);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String jsonString = packet.toString();
+            rtChatSdk.setSdkParams(jsonString);
+        }
+
         int retCode;
         if (roomId == null) {
             Toast.makeText(this, "请输入房间号", Toast.LENGTH_SHORT).show();
@@ -361,6 +398,14 @@ public class ConnectAVActivity extends Activity {
     private void lauchTestVideoActiviy(){
         Intent intent = new Intent(this, VideoActivity.class);
         intent.putExtra("username", ObserverUserName);
+        isLunched = true;
+        startActivityForResult(intent, CONNECTION_REQUEST);
+    }
+
+    private void lauchTestVideoPlayerActiviy(){
+        Intent intent = new Intent(this, VideoPlayerActivity.class);
+        intent.putExtra("username", ObserverUserName);
+        intent.putExtra("roomId", this.roomId);
         isLunched = true;
         startActivityForResult(intent, CONNECTION_REQUEST);
     }
@@ -387,9 +432,7 @@ public class ConnectAVActivity extends Activity {
         boolean videoCallEnabled = sharedPrefGetBoolean(R.string.pref_videocall_key,
             CallActivity.EXTRA_VIDEO_CALL, R.string.pref_videocall_default, useValuesFromIntent);
 
-        // Use screencapture option.
-        boolean useScreencapture = sharedPrefGetBoolean(R.string.pref_screencapture_key,
-            CallActivity.EXTRA_SCREENCAPTURE, R.string.pref_screencapture_default, useValuesFromIntent);
+
 
         // Check Capture to texture.
         boolean captureToTexture = true;
@@ -439,7 +482,6 @@ public class ConnectAVActivity extends Activity {
         Intent intent = new Intent(this, CallActivity.class);
         intent.putExtra(CallActivity.EXTRA_USERNAME, ObserverUserName);
         intent.putExtra(CallActivity.EXTRA_VIDEO_CALL, videoCallEnabled);
-        intent.putExtra(CallActivity.EXTRA_SCREENCAPTURE, useScreencapture);
         intent.putExtra(CallActivity.EXTRA_VIDEO_WIDTH, videoWidth);
         intent.putExtra(CallActivity.EXTRA_VIDEO_HEIGHT, videoHeight);
         intent.putExtra(CallActivity.EXTRA_VIDEO_FPS, cameraFps);
@@ -485,6 +527,11 @@ public class ConnectAVActivity extends Activity {
                    appkey = outerAppKey;
                    platformUrl = outerPlatformServerUrl;
                }
+                if(!isInnerNet){
+                    appid = outerAppId;
+                    appkey = outerAppKey;
+                    platformUrl = outerPlatformServerUrl;
+                }
                 //init SDK
                 rtChatSdk.initSDK(appid, appkey);
 
@@ -534,6 +581,23 @@ public class ConnectAVActivity extends Activity {
                 }
                 activityStatus = 1;
                 connectToRoom(roomEditText.getText().toString(), kVideo_normalDefinition);
+                break;
+            }
+
+            case R.id.button_test4: {
+                userName = etUserName.getText().toString().trim();
+                userKey = etUserKey.getText().toString().trim();
+                if (TextUtils.isEmpty(userName))
+                    userName = "nameChange";
+                rtChatSdk.setUserInfo(userName, userKey);
+                ObserverUserName = sharedPref.getString(
+                        keyprefUsername, getString(R.string.pref_username_default));
+                if(TextUtils.isEmpty(ObserverUserName)){
+                    ObserverUserName = userName;
+                }
+                activityStatus = 3;
+
+                connectToRoom(roomEditText.getText().toString(), kConferenceNeedForward|kMusicLowMark|kVoiceAndVideo);
                 break;
             }
         }

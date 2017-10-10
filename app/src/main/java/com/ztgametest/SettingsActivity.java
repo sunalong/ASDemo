@@ -18,7 +18,7 @@ import org.webrtc.voiceengine.WebRtcAudioUtils;
 public class SettingsActivity extends Activity implements OnSharedPreferenceChangeListener {
   private SettingsFragment settingsFragment;
   private String keyprefVideoCall;
-  private String keyprefScreencapture;
+  private String keyprefCdntest;
   private String keyprefCamera2;
   private String keyprefResolution;
   private String keyprefFps;
@@ -49,7 +49,7 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
   private String keyprefEnableDataChannel;
   private String keyprefOrdered;
 
-  private String keyprefMaxRetransmits;
+  private String keyprefCheatSrcIp;
   private String keyprefDataProtocol;
   private String keyprefNegotiated;
   private String keyprefLiveServerUrl;
@@ -60,7 +60,7 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     keyprefVideoCall = getString(R.string.pref_videocall_key);
-    keyprefScreencapture = getString(R.string.pref_screencapture_key);
+    keyprefCdntest = getString(R.string.pref_cdntest_key);
     keyprefCamera2 = getString(R.string.pref_camera2_key);
     keyprefResolution = getString(R.string.pref_resolution_key);
     keyprefFps = getString(R.string.pref_fps_key);
@@ -87,7 +87,7 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
     keyprefEnableDataChannel = getString(R.string.pref_enable_datachannel_key);
     keyprefOrdered = getString(R.string.pref_ordered_key);
     keyprefUsername = getString(R.string.pref_view_someone_username_key);
-    keyprefMaxRetransmits = getString(R.string.pref_max_retransmits_key);
+    keyprefCheatSrcIp = getString(R.string.pref_cheat_src_ip_key);
     keyprefDataProtocol = getString(R.string.pref_data_protocol_key);
     keyprefNegotiated = getString(R.string.pref_negotiated_key);
     keyprefLiveServerUrl = getString(R.string.pref_live_server_url_key);
@@ -112,7 +112,7 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
         settingsFragment.getPreferenceScreen().getSharedPreferences();
     sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     updateSummaryB(sharedPreferences, keyprefVideoCall);
-    updateSummaryB(sharedPreferences, keyprefScreencapture);
+    updateSummaryB(sharedPreferences, keyprefCdntest);
     updateSummaryB(sharedPreferences, keyprefCamera2);
     updateSummary(sharedPreferences, keyprefResolution);
     updateSummary(sharedPreferences, keyprefFps);
@@ -141,7 +141,7 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
     updateSummaryB(sharedPreferences, keyprefEnableDataChannel);
     updateSummaryB(sharedPreferences, keyprefOrdered);
     updateSummary(sharedPreferences, keyprefUsername);
-    updateSummary(sharedPreferences, keyprefMaxRetransmits);
+    updateSummary(sharedPreferences, keyprefCheatSrcIp);
     updateSummary(sharedPreferences, keyprefDataProtocol);
     updateSummaryB(sharedPreferences, keyprefNegotiated);
     updateSummary(sharedPreferences, keyprefLiveServerUrl);
@@ -207,7 +207,7 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
         || key.equals(keyPrefNetwork)
         || key.equals(keyPrefRoomServerUrl)
         || key.equals(keyprefUsername)
-        || key.equals(keyprefMaxRetransmits)
+        || key.equals(keyprefCheatSrcIp)
         || key.equals(keyprefDataProtocol)
         || key.equals(keyprefLiveServerUrl)) {
       updateSummary(sharedPreferences, key);
@@ -215,7 +215,7 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
         || key.equals(keyprefStartAudioBitrateValue)) {
       updateSummaryBitrate(sharedPreferences, key);
     } else if (key.equals(keyprefVideoCall)
-        || key.equals(keyprefScreencapture)
+        || key.equals(keyprefCdntest)
         || key.equals(keyprefCamera2)
         || key.equals(keyPrefTracing)
         || key.equals(keyprefCaptureQualitySlider)
@@ -302,7 +302,7 @@ public class SettingsActivity extends Activity implements OnSharedPreferenceChan
     boolean enabled = sharedPreferences.getBoolean(keyprefEnableDataChannel, true);
     settingsFragment.findPreference(keyprefOrdered).setEnabled(enabled);
     settingsFragment.findPreference(keyprefUsername).setEnabled(enabled);
-    settingsFragment.findPreference(keyprefMaxRetransmits).setEnabled(enabled);
+    settingsFragment.findPreference(keyprefCheatSrcIp).setEnabled(enabled);
     settingsFragment.findPreference(keyprefDataProtocol).setEnabled(enabled);
     settingsFragment.findPreference(keyprefNegotiated).setEnabled(enabled);
     settingsFragment.findPreference(keyprefLiveServerUrl).setEnabled(enabled);

@@ -12,16 +12,6 @@
     tools:context="com.ztgametest.EnterActivity">
 
     <Button
-        android:text="音视频测试"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:id="@+id/avbutton"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="jumpOnClick"/>
-
-    <Button
         android:text="语音测试"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,5 +30,15 @@
         android:onClick="jumpOnClick"
         android:layout_below="@+id/abutton"
         android:layout_alignStart="@+id/avbutton"/>
+
+    <Button
+        android:text="音视频测试"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="148dp"
+        android:id="@+id/avbutton"
+        android:onClick="jumpOnClick"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

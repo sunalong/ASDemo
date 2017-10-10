@@ -35,7 +35,7 @@
                     android:focusableInTouchMode="true">
 
                     <CheckBox
-                        android:text="发送本地视频"
+                        android:text="显示本地视频"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
@@ -45,7 +45,7 @@
                         android:id="@+id/checkBox1"/>
 
                     <CheckBox
-                        android:text="显示本地视频"
+                        android:text="发送本地视频"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
@@ -133,7 +133,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="jumpOnClick1"
-                        android:text="切换显示模式"
+                        android:text="开始录制"
                         android:layout_alignParentBottom="true"
                         android:layout_alignStart="@+id/checkBox12"
                         android:layout_marginBottom="12dp"/>
@@ -162,7 +162,7 @@
 
                 <LinearLayout
                     android:id="@+id/buttons_videocall_container"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_alignWithParentIfMissing="true"
                     android:layout_marginBottom="10dp"
                     android:layout_centerHorizontal="true"
