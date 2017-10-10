@@ -83,13 +83,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private String mAppId;
     private String mPlatformUrl;
 
-
-    //内网key
-    private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
-    private static final String innerAppId = "1fcfaa5cdc01502e";
-    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
-
-
     //外网key
     private static final String outerAppId = "3768c59536565afb";
     private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
@@ -158,19 +151,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
         etUserName.setText(getRandomString(10));
         etUserKey.setText(getRandomString(11));
 
-        if (isInnerNet){
-            mAppId = innerAppId;
-            mAppKey = innerAppKey;
-            mPlatformUrl = innerPlatformServerUrl;
-        }else{
             mAppId = outerAppId;
             mAppKey = outerAppKey;
             mPlatformUrl = outerPlatformServerUrl;
             etRoomServer.setText(mPlatformUrl);
-        }
-
-
-        //setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
     }
 
     @Override

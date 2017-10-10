@@ -33,11 +33,6 @@ public class ConnectAVActivity extends Activity {
     private static final String TAG = "ConnectAVActivity";
     private static final int CONNECTION_REQUEST = 1;
     private static final int REMOVE_FAVORITE_INDEX = 0;
-    //内网key
-    private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
-    private static final String innerAppId = "1fcfaa5cdc01502e";
-    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
-    private static final String innerLiveServerUrl = "192.168.114.6:8000";
 
     //外网key
     private static final String outerAppId = "3768c59536565afb";
@@ -60,44 +55,9 @@ public class ConnectAVActivity extends Activity {
     private ImageButton connectButton;
     private EditText roomEditText;
     private SharedPreferences sharedPref;
-    private String keyprefVideoCallEnabled;
-    private String keyprefCdntest;
-    private String keyprefCamera2;
     private String keyprefResolution;
     private String keyprefFps;
-    private String keyprefCaptureQualitySlider;
-    private String keyprefVideoBitrateType;
-    private String keyprefVideoBitrateValue;
-    private String keyprefVideoCodec;
-    private String keyprefAudioBitrateType;
-    private String keyprefAudioBitrateValue;
-    private String keyprefNetwork;
-    private String keyprefHwCodecAcceleration;
-    private String keyprefCaptureToTexture;
-    private String keyprefFlexfec;
-    private String keyprefNoAudioProcessingPipeline;
-    private String keyprefAecDump;
-    private String keyprefOpenSLES;
-    private String keyprefDisableBuiltInAec;
-    private String keyprefDisableBuiltInAgc;
-    private String keyprefDisableBuiltInNs;
-    private String keyprefEnableLevelControl;
-    private String keyprefDisplayHud;
-    private String keyprefTracing;
-    private String keyprefRoomServerUrl;
     private String keyprefRoom;
-    private ArrayAdapter<String> adapter;
-    private String keyprefEnableDataChannel;
-    private String keyprefOrdered;
-
-    private String keyprefCheatsSrcIp;
-    private String keyprefDataProtocol;
-    private String keyprefNegotiated;
-    private String keyprefLiveServerUrl;
-
-    private boolean isInnerNet = false;
-
-
 
     private String keyprefUsername;
     private boolean hadInit = false;
@@ -122,7 +82,7 @@ public class ConnectAVActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         final Intent intent = getIntent();
-        isInnerNet = intent.getBooleanExtra("isReleaseBuild", true);
+//        isInnerNet = intent.getBooleanExtra("isReleaseBuild", true);
 
         rtChatSdk = NativeVoiceEngine.getInstance();
         rtChatSdk.register(this);
@@ -186,39 +146,9 @@ public class ConnectAVActivity extends Activity {
         // Get setting keys.
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        keyprefVideoCallEnabled = getString(R.string.pref_videocall_key);
-        keyprefCdntest = getString(R.string.pref_cdntest_key);
-        keyprefCamera2 = getString(R.string.pref_camera2_key);
         keyprefResolution = getString(R.string.pref_resolution_key);
         keyprefFps = getString(R.string.pref_fps_key);
-        keyprefCaptureQualitySlider = getString(R.string.pref_capturequalityslider_key);
-        keyprefVideoBitrateType = getString(R.string.pref_maxvideobitrate_key);
-        keyprefVideoBitrateValue = getString(R.string.pref_maxvideobitratevalue_key);
-        keyprefVideoCodec = getString(R.string.pref_videocodec_key);
-        keyprefHwCodecAcceleration = getString(R.string.pref_hwcodec_key);
-        keyprefCaptureToTexture = getString(R.string.pref_capturetotexture_key);
-        keyprefFlexfec = getString(R.string.pref_flexfec_key);
-        keyprefAudioBitrateType = getString(R.string.pref_startaudiobitrate_key);
-        keyprefAudioBitrateValue = getString(R.string.pref_startaudiobitratevalue_key);
-        keyprefNetwork = getString(R.string.pref_network_key);
-        keyprefNoAudioProcessingPipeline = getString(R.string.pref_noaudioprocessing_key);
-        keyprefAecDump = getString(R.string.pref_aecdump_key);
-        keyprefOpenSLES = getString(R.string.pref_opensles_key);
-        keyprefDisableBuiltInAec = getString(R.string.pref_disable_built_in_aec_key);
-        keyprefDisableBuiltInAgc = getString(R.string.pref_disable_built_in_agc_key);
-        keyprefDisableBuiltInNs = getString(R.string.pref_disable_built_in_ns_key);
-        keyprefEnableLevelControl = getString(R.string.pref_enable_level_control_key);
-        keyprefDisplayHud = getString(R.string.pref_displayhud_key);
-        keyprefTracing = getString(R.string.pref_tracing_key);
-        keyprefRoomServerUrl = getString(R.string.pref_room_server_url_key);
         keyprefRoom = getString(R.string.pref_room_key);
-        keyprefEnableDataChannel = getString(R.string.pref_enable_datachannel_key);
-        keyprefOrdered = getString(R.string.pref_ordered_key);
-
-        keyprefCheatsSrcIp = getString(R.string.pref_cheat_src_ip_key);
-        keyprefDataProtocol = getString(R.string.pref_data_protocol_key);
-        keyprefNegotiated = getString(R.string.pref_negotiated_key);
-        keyprefLiveServerUrl = getString(R.string.pref_live_server_url_key);
 
         setContentView(R.layout.activity_connect);
 
@@ -236,37 +166,14 @@ public class ConnectAVActivity extends Activity {
         connectButton = (ImageButton) findViewById(R.id.connect_button);
         connectButton.setOnClickListener(connectListener);
 
-        //default access inner network for testing
-        appid = innerAppId;
-        appkey = innerAppKey;
-        platformUrl = innerPlatformServerUrl;
-        liveServerUrl = innerLiveServerUrl;
-
-
-        //setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.connect_menu, menu);
-        return true;
+        appid = outerAppId;
+        appkey = outerAppKey;
+        platformUrl = outerPlatformServerUrl;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         rtChatSdk.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items.
-        if (item.getItemId() == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        }  else {
-            return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
@@ -360,18 +267,13 @@ public class ConnectAVActivity extends Activity {
 
     private void connectToRoom(String roomId, int mediaType) {
 
-        platformUrl = sharedPrefGetString(R.string.pref_room_server_url_key,
-                "platformIp", R.string.pref_room_server_url_default, false);
-
         liveServerUrl = sharedPrefGetString(R.string.pref_live_server_url_key, "liveServerIp", R.string.pref_room_server_url_default, false);
 
         // Use screencapture option.
         boolean cdntest = sharedPrefGetBoolean(R.string.pref_cdntest_key,
                 "cdntest", R.string.pref_cdntest_default, false);
-
         String cheatSrcIp = sharedPrefGetString(R.string.pref_cheat_src_ip_key, "liveServerIp", R.string.pref_cheat_src_ip_default, false);
 
-        if(isInnerNet) {
             JSONObject packet = new JSONObject();
             try {
                 packet.put("LiveServerAddr", liveServerUrl);
@@ -383,7 +285,7 @@ public class ConnectAVActivity extends Activity {
             }
             String jsonString = packet.toString();
             rtChatSdk.setSdkParams(jsonString);
-        }
+
 
         int retCode;
         if (roomId == null) {
@@ -523,16 +425,9 @@ public class ConnectAVActivity extends Activity {
             case R.id.initButton: {
                 String network = sharedPrefGetString(R.string.pref_network_key,
                         "networksetting", R.string.pref_network_default, false);
-               if(network.equals("outer-net")){
-                   appid = outerAppId;
-                   appkey = outerAppKey;
-                   platformUrl = outerPlatformServerUrl;
-               }
-                if(!isInnerNet){
                     appid = outerAppId;
                     appkey = outerAppKey;
                     platformUrl = outerPlatformServerUrl;
-                }
                 //init SDK
                 rtChatSdk.initSDK(appid, appkey);
 
