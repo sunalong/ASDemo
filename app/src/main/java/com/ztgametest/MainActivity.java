@@ -61,6 +61,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
     private EditText etRoomServer;
     private EditText etRoomId;
 
+    //外网key
+    private static final String outerAppId = "3768c59536565afb";
+    private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
+
     private NativeVoiceEngine rtChatSdk;
     ReceiveDataFromC receiveDataFromC;
     private static String FileURL = "http://giant.audio.mztgame.com/wangpan.php";
@@ -198,7 +202,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
         int retCode = 0;
         switch (v.getId()) {
             case R.id.btnInitSdk:
-                rtChatSdk.initSDK("1fcfaa5cdc01502e", "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82");
+                rtChatSdk.initSDK(outerAppId, outerAppKey);
                 Toast.makeText(this, "初始化返回的值：retCode:" + retCode, 0).show();
                 break;
             case R.id.btnSetUserInfo:

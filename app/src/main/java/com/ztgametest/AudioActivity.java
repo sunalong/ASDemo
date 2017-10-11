@@ -40,7 +40,6 @@ public class AudioActivity extends Activity implements View.OnClickListener {
 
     private Button btnOpenMusicMode;
 
-    private EditText etRoomServer;
     private EditText etRoomId;
     private EditText etUserName;
     private EditText etUserKey;
@@ -52,16 +51,9 @@ public class AudioActivity extends Activity implements View.OnClickListener {
 
     private final int kVoiceOnly = 1;
     private final int kVoiceHigh = 0xa0;
-    private final boolean isInnerNet = true;
-
     private String mAppKey;
     private String mAppId;
     private String mPlatformUrl;
-
-    //内网key
-    private static final String innerAppKey = "7324e82e18d9d16ca4783aa5f872adf54d17a0175f48fa7c1af0d80211dfff82";
-    private static final String innerAppId = "1fcfaa5cdc01502e";
-    private static final String innerPlatformServerUrl = "192.168.114.7:18888";
 
     //外网key
     private static final String outerAppId = "3768c59536565afb";
@@ -111,15 +103,10 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         setOnListener();
         etUserName.setText(getRandomString(10));
         etUserKey.setText(getRandomString(11));
-        if (isInnerNet){
-            mAppId = innerAppId;
-            mAppKey = innerAppKey;
-            mPlatformUrl = innerPlatformServerUrl;
-        }else{
-            mAppId = outerAppId;
-            mAppKey = outerAppKey;
-            mPlatformUrl = outerPlatformServerUrl;
-        }
+
+        mAppId = outerAppId;
+        mAppKey = outerAppKey;
+        mPlatformUrl = outerPlatformServerUrl;
     }
 
     @Override
@@ -132,7 +119,6 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         btnInitSdk = (Button) findViewById(R.id.btnInitSdk);
 
         etRoomId = (EditText) findViewById(R.id.etRoomId);
-        etRoomServer = (EditText) findViewById(R.id.etRoomServer);
 
         etUserName = (EditText) findViewById(R.id.etUserName);
         etUserKey = (EditText) findViewById(R.id.etUserKey);
@@ -177,31 +163,31 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     int reverbLevel = 0;
     boolean mute = true;
 
-    public MediaPlayer createLocalMp3(FileDescriptor file){
-        MediaPlayer  mp=new MediaPlayer();
-        try{
+    public MediaPlayer createLocalMp3(FileDescriptor file) {
+        MediaPlayer mp = new MediaPlayer();
+        try {
             mp.setDataSource(file);
-        }  catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return mp;
     }
 
-    private void playMusic(){
-        boolean createState=false;
-        if(mediaPlayer==null){
+    private void playMusic() {
+        boolean createState = false;
+        if (mediaPlayer == null) {
             try {
                 AssetFileDescriptor afd = this.getAssets().openFd("1.mp3");
-                mediaPlayer =new MediaPlayer();
+                mediaPlayer = new MediaPlayer();
                 mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                createState=true;
+                createState = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
 
-        mediaPlayer.setOnCompletionListener(new OnCompletionListener(){
+        mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 try {
@@ -222,7 +208,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         });
 
         try {
-            if(createState){
+            if (createState) {
                 try {
                     mediaPlayer.prepare();
                 } catch (IOException e) {
@@ -238,11 +224,11 @@ public class AudioActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    void stopMusic(){
-        if(mediaPlayer!=null){
+    void stopMusic() {
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
-            mediaPlayer=null;
+            mediaPlayer = null;
         }
     }
 
@@ -261,13 +247,6 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 if (TextUtils.isEmpty(userName))
                     userName = "nameChange";
                 rtChatSdk.setUserInfo(userName, userKey);
-
-                String roomServerStr = etRoomServer.getText().toString().trim();
-                if(TextUtils.isEmpty(roomServerStr)){
-                    roomServerStr = mPlatformUrl;
-                }
-                if(isInnerNet)
-                    rtChatSdk.customRoomServerAddr(roomServerStr);
 
                 if (TextUtils.isEmpty(etRoomId.getText())) {
                     Toast.makeText(this, "请输入房间号", Toast.LENGTH_SHORT).show();
@@ -317,7 +296,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
                 stopMusic();
                 break;
             case R.id.btnEnableMusicMode:
-                rtChatSdk.setSdkParams("{\"EnableMusicMode\":"+true + "}");
+                rtChatSdk.setSdkParams("{\"EnableMusicMode\":" + true + "}");
                 break;
         }
     }
@@ -333,7 +312,7 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         NativeVoiceEngine.getInstance().requestLeavePlatformRoom();
         super.onBackPressed();
     }
