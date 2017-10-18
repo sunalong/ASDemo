@@ -65,8 +65,8 @@ public class AudioActivity extends Activity implements View.OnClickListener {
     //外网key
     private static final String outerAppId = "3768c59536565afb";
     private static final String outerAppKey = "df191ec457951c35b8796697c204382d0e12d4e8cb56f54df6a54394be74c5fe";
-    private static final String outerPlatformServerUrl = "115.159.251.79:8080";//外网测试IP
-//    private static final String outerPlatformServerUrl = "room.audio.mztgame.com:8080";//外网正式IP
+//    private static final String outerPlatformServerUrl = "115.159.251.79:8080";//外网测试IP
+    private static final String outerPlatformServerUrl = "room.audio.mztgame.com:8080";//外网正式IP
 
     private MediaPlayer mediaPlayer;
 
