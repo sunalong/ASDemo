@@ -313,7 +313,7 @@ public class VideoActivity extends Activity {
                 isRecording = ! isRecording;
                 if(isRecording) {
                     button3.setText("关闭录制");
-                    NativeVoiceEngine.getInstance().startRecordConference("test", true);
+                    NativeVoiceEngine.getInstance().startRecordConference("test", true,"222.73.196.99/hls");
                 }
                 else{
                     button3.setText("打开录制");
