@@ -250,7 +250,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Radi
                     btnRecord.setText("已经停止录音");
                     //Todo:停止翻译
                 } else {
-                    boolean recordVoiceRet = rtChatSdk.startRecordVoice(convertVoiceToText,true);
+                    boolean recordVoiceRet = rtChatSdk.startRecordVoice(convertVoiceToText,true,10);
                     Toast.makeText(this, " startRecordVoicecode=" + recordVoiceRet, 0).show();
 //                    if (!recordVoiceRet) {//为false时（如当权限被禁止时）录音不成功，所以状态不变化
 //                      //现被注释原因：4.0时即使权限被禁，依然会执行录音，只是不会成功录音、上传罢了，所以状态需要改变
